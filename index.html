@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Canal Zone | Clear Creek Canyon</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom scrollbar for chat */
+        .chat-scroll::-webkit-scrollbar { width: 6px; }
+        .chat-scroll::-webkit-scrollbar-track { background: transparent; }
+        .chat-scroll::-webkit-scrollbar-thumb { background-color: #cbd5e1; border-radius: 10px; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col">
+
+    <!-- Navigation Header -->
+    <header class="bg-emerald-800 text-white shadow-md">
+        <div class="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
+            <div class="flex items-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m8 3 4 8 5-5 5 15H2L8 3z"/></svg>
+                <h1 class="text-xl font-bold tracking-wide">Canal Zone Guide</h1>
+            </div>
+            <div class="text-sm font-medium text-emerald-100 hidden sm:block">Clear Creek Canyon, CO</div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-grow max-w-7xl mx-auto px-4 py-6 w-full flex flex-col lg:flex-row gap-6">
+        
+        <!-- Left Side: Topo & Info -->
+        <div class="flex-1 space-y-6">
+            
+            <!-- Topo Image Section -->
+            <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden relative">
+                <div class="bg-slate-100 p-2 border-b border-slate-200 flex justify-between items-center">
+                    <h2 class="font-semibold text-slate-700">Route Topo</h2>
+                    <span class="text-xs bg-emerald-100 text-emerald-800 px-2 py-1 rounded-full font-medium">South-Facing</span>
+                </div>
+                <div class="p-2">
+                    <img src="106553094_medium_1494119796.jpg" alt="Canal Zone Topo Map" class="w-full h-auto rounded-lg object-contain" onerror="this.src='https://placehold.co/800x500?text=Image+Unavailable';">
+                </div>
+            </div>
+
+            <!-- Live AI Conditions Panel -->
+            <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5 relative overflow-hidden">
+                <div id="liveLoading" class="absolute inset-0 bg-white/90 z-10 flex flex-col items-center justify-center backdrop-blur-sm transition-opacity duration-500">
+                    <div class="w-6 h-6 rounded-full border-2 border-emerald-600 border-t-transparent animate-spin mb-2"></div>
+                    <span class="text-sm font-semibold text-emerald-800">AI is fetching live canyon data...</span>
+                </div>
+                <div class="flex items-center gap-2 mb-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-blue-600"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                    <h2 class="font-bold text-slate-800">Live AI Report: Conditions & Alerts</h2>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div class="bg-amber-50/50 p-3 rounded-lg border border-amber-100">
+                        <span class="text-xs text-slate-500 font-bold uppercase tracking-wide">☀️ Sun Hours Today</span>
+                        <p id="liveSunHours" class="text-sm font-medium text-slate-800 mt-1">...</p>
+                    </div>
+                    <div class="bg-indigo-50/50 p-3 rounded-lg border border-indigo-100">
+                        <span class="text-xs text-slate-500 font-bold uppercase tracking-wide">☁️ Shade Hours Today</span>
+                        <p id="liveShadeHours" class="text-sm font-medium text-slate-800 mt-1">...</p>
+                    </div>
+                    <div class="bg-rose-50/50 p-3 rounded-lg border border-rose-100">
+                        <span class="text-xs text-slate-500 font-bold uppercase tracking-wide">🚗 US-6 Traffic</span>
+                        <p id="liveTraffic" class="text-sm font-medium text-slate-800 mt-1">...</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Selectors -->
+            <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200 flex flex-col sm:flex-row gap-4">
+                <div class="flex-1">
+                    <label for="routeSelect" class="block text-sm font-semibold text-slate-700 mb-1 flex items-center gap-1">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-emerald-600"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>
+                        Select Route
+                    </label>
+                    <select id="routeSelect" class="w-full border-slate-300 rounded-lg shadow-sm focus:border-emerald-500 focus:ring-emerald-500 p-2.5 border bg-slate-50 text-slate-800 font-medium"></select>
+                </div>
+                <div class="flex-1">
+                    <label for="monthSelect" class="block text-sm font-semibold text-slate-700 mb-1 flex items-center gap-1">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-amber-500"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>
+                        Time of Year (Sun/Shade)
+                    </label>
+                    <select id="monthSelect" class="w-full border-slate-300 rounded-lg shadow-sm focus:border-emerald-500 focus:ring-emerald-500 p-2.5 border bg-slate-50 text-slate-800 font-medium">
+                        <option value="0">January</option>
+                        <option value="1">February</option>
+                        <option value="2">March</option>
+                        <option value="3">April</option>
+                        <option value="4">May</option>
+                        <option value="5">June</option>
+                        <option value="6">July</option>
+                        <option value="7">August</option>
+                        <option value="8">September</option>
+                        <option value="9">October</option>
+                        <option value="10">November</option>
+                        <option value="11">December</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Dynamic Route Info Panel -->
+            <div id="routeInfoCard" class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden hidden transition-all duration-300">
+                <div class="bg-slate-800 text-white p-4 flex justify-between items-center">
+                    <h3 id="routeName" class="text-xl font-bold tracking-wide">Route Name</h3>
+                    <span id="routeGrade" class="bg-emerald-500 text-white px-3 py-1 rounded-full font-bold text-sm">5.x</span>
+                </div>
+                
+                <div class="p-6">
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                        <div class="bg-slate-50 p-3 rounded-lg border border-slate-100">
+                            <span class="block text-xs text-slate-500 uppercase tracking-wider font-semibold">Type</span>
+                            <span id="routeType" class="font-medium text-slate-800">Sport</span>
+                        </div>
+                        <div class="bg-slate-50 p-3 rounded-lg border border-slate-100">
+                            <span class="block text-xs text-slate-500 uppercase tracking-wider font-semibold">Length</span>
+                            <span id="routeLength" class="font-medium text-slate-800">0'</span>
+                        </div>
+                        <div class="bg-slate-50 p-3 rounded-lg border border-slate-100">
+                            <span class="block text-xs text-slate-500 uppercase tracking-wider font-semibold">Draws needed</span>
+                            <span id="routeDraws" class="font-medium text-slate-800">~0 draws</span>
+                        </div>
+                        <div class="bg-slate-50 p-3 rounded-lg border border-slate-100">
+                            <span class="block text-xs text-slate-500 uppercase tracking-wider font-semibold">Map Key</span>
+                            <span id="routeKey" class="font-medium text-slate-800">-</span>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-6">
+                        <h4 class="text-sm font-semibold text-slate-700 mb-2 border-b border-slate-200 pb-1">Route Details</h4>
+                        <p id="routeDesc" class="text-slate-600 text-sm leading-relaxed">Description goes here.</p>
+                    </div>
+
+                    <div class="bg-amber-50 border border-amber-200 rounded-lg p-4">
+                        <div class="flex items-center gap-2 mb-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-amber-600"><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>
+                            <h4 class="text-sm font-bold text-amber-800">Sun & Shade Forecast</h4>
+                        </div>
+                        <p id="sunShadeDesc" class="text-amber-900 text-sm font-medium leading-relaxed"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Side: AI Assistant -->
+        <div class="lg:w-[350px] w-full flex flex-col bg-white rounded-xl shadow-sm border border-slate-200 h-[600px] lg:h-auto overflow-hidden">
+            <div class="bg-emerald-700 text-white p-4 flex items-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8V4H8"/><rect width="16" height="12" x="4" y="8" rx="2"/><path d="M2 14h2"/><path d="M20 14h2"/><path d="M15 13v2"/><path d="M9 13v2"/></svg>
+                <div>
+                    <h2 class="font-bold">Canal Zone Guide AI</h2>
+                    <p class="text-xs text-emerald-200">Powered by Gemini 2.5 Flash</p>
+                </div>
+            </div>
+            
+            <div id="chatMessages" class="flex-grow p-4 overflow-y-auto chat-scroll flex flex-col gap-3 bg-slate-50">
+                <!-- Initial Bot Message -->
+                <div class="flex flex-col max-w-[85%] self-start">
+                    <span class="bg-white border border-slate-200 text-slate-800 rounded-2xl rounded-tl-sm px-4 py-2.5 text-sm shadow-sm">
+                        Hey there! I'm your local AI climbing guide for the Canal Zone in Clear Creek. Ask me about specific routes, gear, or conditions!
+                    </span>
+                </div>
+            </div>
+
+            <div class="p-3 bg-white border-t border-slate-200">
+                <form id="chatForm" class="flex gap-2">
+                    <input type="text" id="chatInput" placeholder="Ask about a route..." class="flex-grow border border-slate-300 rounded-full px-4 py-2 text-sm focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 bg-slate-50" autocomplete="off" required>
+                    <button type="submit" class="bg-emerald-600 hover:bg-emerald-700 text-white rounded-full p-2 w-10 h-10 flex items-center justify-center transition-colors shadow-sm">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" x2="11" y1="2" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+                    </button>
+                </form>
+            </div>
+        </div>
+
+    </main>
+
+    <script>
+        // --- API CONFIGURATION ---
+        // To hardcode your API key for GitHub Pages, paste your key between the quotes below:
+        // Example: const apiKey = "AIzaSyA7TKxg14_TMYyhEXY4OPGQe1o9ODXsi7I";
+        const apiKey = "AIzaSyA7TKxg14_TMYyhEXY4OPGQe1o9ODXsi7I"; 
+        
+        // --- DATA ---
+        const routes = [
+            // Routes marked on the Topo Image
+            { id: "A", name: "Cut Loose", grade: "5.11-", length: "75", type: "Bolts", draws: "~10-12 draws", desc: "Solid 11- on the far left. Technical face climbing. 1 pitch.", onTopo: true },
+            { id: "B", name: "Bear's Choice", grade: "5.10", length: "75", type: "Bolts", draws: "~10-12 draws", desc: "A popular moderate line. Consistent sustained climbing. 1 pitch.", onTopo: true },
+            { id: "C", name: "Box of Rain", grade: "5.8", length: "75", type: "Bolts", draws: "~10-12 draws", desc: "Fun, well-protected 5.8 on good rock. 1 pitch.", onTopo: true },
+            { id: "D", name: "Ripple", grade: "5.8", length: "75", type: "Bolts", draws: "~10-12 draws", desc: "Cruisy and fun moderate. Great warmup. 1 pitch.", onTopo: true },
+            { id: "E", name: "Venice Beach", grade: "5.8", length: "75", type: "Bolts", draws: "~10-12 draws", desc: "Another classic 5.8 in the main block. 1 pitch.", onTopo: true },
+            { id: "F", name: "Holiday Road", grade: "5.8", length: "70", type: "Bolts", draws: "~9-11 draws", desc: "Slightly shorter but very solid 5.8 climbing. 1 pitch.", onTopo: true },
+            { id: "G", name: "Beasto", grade: "5.10", length: "70", type: "Bolts", draws: "~9-11 draws", desc: "Starts getting into the steeper/blockier section. Strong line. 1 pitch.", onTopo: true },
+            { id: "H", name: "Turkey Jerky", grade: "5.10", length: "80", type: "Bolts", draws: "~11-13 draws", desc: "Longer 5.10 requiring decent endurance. 1 pitch.", onTopo: true },
+            { id: "I", name: "Walking With A Ghost", grade: "5.11", length: "55", type: "Bolts", draws: "~7-8 draws", desc: "Punchy, shorter 5.11. Has 2 different starts. 1 pitch.", onTopo: true },
+            { id: "J", name: "Ivy League", grade: "5.10-", length: "50", type: "Bolts", draws: "~6-8 draws", desc: "Short, punchy and sweet 10-. 1 pitch.", onTopo: true },
+            { id: "K", name: "Panama Red", grade: "5.10-", length: "50", type: "Bolts", draws: "~6-8 draws", desc: "Bouldery start, fairly short route. 1 pitch.", onTopo: true },
+            { id: "L", name: "Route Canal", grade: "5.9", length: "50", type: "Gear & Bolt", draws: "Mixed Rack", desc: "Mixed protection line. Bring a light rack. 1 pitch.", onTopo: true },
+            { id: "M", name: "Gondolier Arete", grade: "5.10-", length: "55", type: "Bolts", draws: "~7-8 draws", desc: "Fun, aesthetic arete climbing on the right side. 1 pitch.", onTopo: true },
+            
+            // Other Routes from list (Off Topo or Variations)
+            { id: "A2B", name: "Bear's Choice Easy Variation", grade: "5.8+", length: "75", type: "Bolts", draws: "~10 draws", desc: "Easier variation of Bear's Choice.", onTopo: false },
+            { id: "F_list", name: "Dirt Trek", grade: "5.9", length: "132", type: "Bolts & Gear", draws: "Standard Rack", desc: "Long adventure route. Bring a standard rack. 1 pitch.", onTopo: false },
+            { id: "G_list", name: "Ridin' the Moon Buggy", grade: "5.9 R", length: "70", type: "Gear", draws: "Trad Rack", desc: "Runout trad route (R-rated). 1 pitch.", onTopo: false },
+            { id: "H_list", name: "Berga", grade: "5.9", length: "80", type: "Bolts", draws: "~11 draws", desc: "Fun, long 5.9 sport route.", onTopo: false },
+            { id: "LM", name: "Snake Eyes", grade: "5.11", length: "var", type: "Bolts", draws: "Varies", desc: "Multiple variations possible.", onTopo: false },
+            { id: "R", name: "The Wheel", grade: "5.5", length: "60", type: "Gear", draws: "Trad Rack", desc: "Easy trad line.", onTopo: false },
+            { id: "S", name: "Made In The Shade", grade: "5.9-", length: "125", type: "Bolts", draws: "~16-18 draws", desc: "Awesome, very long moderate sport route. Tie knots in the ends of your rope!", onTopo: false },
+            { id: "T", name: "Aretnophobia", grade: "5.11", length: "70", type: "Bolts", draws: "~9 draws", desc: "Tricky arete climbing.", onTopo: false },
+            { id: "V", name: "Batso Canal", grade: "5.10", length: "55", type: "Bolts", draws: "~7 draws", desc: "Good quality rock.", onTopo: false },
+            { id: "W", name: "Lambada", grade: "5.10", length: "60", type: "Bolts", draws: "~8 draws", desc: "Dance up the wall.", onTopo: false },
+            { id: "X", name: "Levada", grade: "5.8+", length: "80", type: "Bolts", draws: "~11 draws", desc: "Long 5.8+ sport line.", onTopo: false },
+            { id: "YZ", name: "The 2021 Evergreen Obstruction", grade: "5.7", length: "60", type: "Gear", draws: "Trad Rack", desc: "Easy trad climbing.", onTopo: false },
+            { id: "A_whop", name: "The Whopper", grade: "5.9-", length: "Unknown", type: "Bolts", draws: "Unknown", desc: "Solid 5.9- climbing.", onTopo: false },
+            { id: "AA", name: "Buckets of Rain", grade: "5.8 / 10-", length: "45", type: "Bolts", draws: "~6 draws", desc: "Short route, grade depends on variation.", onTopo: false },
+            { id: "BB", name: "Lame Line", grade: "5.8", length: "60", type: "Gear", draws: "Trad Rack", desc: "Standard 5.8 trad line.", onTopo: false }
+        ];
+
+        // --- UI ELEMENTS ---
+        const routeSelect = document.getElementById('routeSelect');
+        const monthSelect = document.getElementById('monthSelect');
+        const routeInfoCard = document.getElementById('routeInfoCard');
+        
+        // --- INITIALIZATION ---
+        function init() {
+            // Set current month
+            const currentMonth = new Date().getMonth();
+            monthSelect.value = currentMonth;
+
+            // Populate Route Dropdown
+            let topoGroup = document.createElement('optgroup');
+            topoGroup.label = "Map Marked Routes";
+            
+            let otherGroup = document.createElement('optgroup');
+            otherGroup.label = "Other Wall Routes";
+
+            // Default option
+            let defaultOpt = document.createElement('option');
+            defaultOpt.text = "-- Choose a Route --";
+            defaultOpt.value = "";
+            routeSelect.appendChild(defaultOpt);
+
+            routes.forEach(route => {
+                let opt = document.createElement('option');
+                opt.value = route.id;
+                opt.text = `${route.onTopo ? '['+route.id+'] ' : ''}${route.name} (${route.grade})`;
+                
+                if (route.onTopo) topoGroup.appendChild(opt);
+                else otherGroup.appendChild(opt);
+            });
+
+            routeSelect.appendChild(topoGroup);
+            routeSelect.appendChild(otherGroup);
+
+            // Listeners
+            routeSelect.addEventListener('change', updateRouteDisplay);
+            monthSelect.addEventListener('change', updateSunShadeDisplay);
+            
+            // Let AI fetch live conditions and decide the time of year
+            fetchLiveConditions();
+        }
+
+        // --- DOM UPDATES ---
+        function updateRouteDisplay() {
+            const routeId = routeSelect.value;
+            if (!routeId) {
+                routeInfoCard.classList.add('hidden');
+                return;
+            }
+
+            const route = routes.find(r => r.id === routeId);
+            if(route) {
+                document.getElementById('routeName').textContent = route.name;
+                document.getElementById('routeGrade').textContent = route.grade;
+                document.getElementById('routeType').textContent = route.type;
+                document.getElementById('routeLength').textContent = route.length === "var" || route.length === "Unknown" ? route.length : route.length + " ft";
+                document.getElementById('routeDraws').textContent = route.draws;
+                document.getElementById('routeKey').textContent = route.onTopo ? `Map Letter ${route.id}` : "Not on Image";
+                document.getElementById('routeDesc').textContent = route.desc;
+                
+                updateSunShadeDisplay(); // Update sun info based on current selection
+                routeInfoCard.classList.remove('hidden');
+            }
+        }
+
+        function updateSunShadeDisplay() {
+            const month = parseInt(monthSelect.value);
+            const descEl = document.getElementById('sunShadeDesc');
+            
+            let sunTimes = "";
+            let shadeTimes = "";
+
+            if (month >= 4 && month <= 8) { // May - Sept
+                sunTimes = "9:00 AM - 6:00 PM";
+                shadeTimes = "Before 9:00 AM, After 6:00 PM";
+            } else if ((month >= 2 && month <= 3) || (month >= 9 && month <= 10)) { // Spring/Fall
+                sunTimes = "9:30 AM - 4:30 PM";
+                shadeTimes = "Before 9:30 AM, After 4:30 PM";
+            } else { // Winter
+                sunTimes = "10:00 AM - 3:00 PM (Weak sun)";
+                shadeTimes = "Mostly shaded";
+            }
+
+            descEl.innerHTML = `<span class="block mb-1"><strong>☀️ In the Sun:</strong> ${sunTimes}</span><span class="block"><strong>☁️ In the Shade:</strong> ${shadeTimes}</span>`;
+        }
+
+        // --- AI LIVE DATA FETCH ---
+        async function fetchLiveConditions() {
+            const loadingOverlay = document.getElementById('liveLoading');
+            const sunHoursEl = document.getElementById('liveSunHours');
+            const shadeHoursEl = document.getElementById('liveShadeHours');
+            const trafficEl = document.getElementById('liveTraffic');
+
+            if (!apiKey) {
+                sunHoursEl.textContent = "API Key needed";
+                shadeHoursEl.textContent = "API Key needed";
+                trafficEl.textContent = "API Key needed";
+                loadingOverlay.style.opacity = '0';
+                setTimeout(() => loadingOverlay.classList.add('hidden'), 500);
+                return;
+            }
+
+            const modelUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
+            const payload = {
+                contents: [{ parts: [{ text: "You are a live climbing assistant. Perform a live Google Search for 'US-6 Clear Creek Canyon Colorado traffic'. Based on the current season/date, calculate exactly what hours the South-facing Canal Zone crag will be in the sun, and what hours it will be in the shade today. Return only the requested JSON." }] }],
+                tools: [{ google_search: {} }],
+                generationConfig: {
+                    responseMimeType: "application/json",
+                    responseSchema: {
+                        type: "OBJECT",
+                        properties: {
+                            monthIndex: { type: "INTEGER", description: "Current month index based on the actual live date (0 for Jan, 11 for Dec)" },
+                            sunHours: { type: "STRING", description: "Exact sun hours (e.g., '9:00 AM - 4:00 PM')" },
+                            shadeHours: { type: "STRING", description: "Exact shade hours (e.g., 'Before 9:00 AM, After 4:00 PM')" },
+                            traffic: { type: "STRING", description: "Brief traffic conditions on US-6" }
+                        }
+                    }
+                }
+            };
+
+            try {
+                const response = await fetch(modelUrl, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(payload)
+                });
+                
+                if (!response.ok) throw new Error("Failed to fetch");
+                
+                const data = await response.json();
+                const result = JSON.parse(data.candidates[0].content.parts[0].text);
+                
+                if (result.monthIndex !== undefined && result.monthIndex >= 0 && result.monthIndex <= 11) {
+                    monthSelect.value = result.monthIndex;
+                    if(routeSelect.value) updateSunShadeDisplay(); 
+                }
+                
+                sunHoursEl.textContent = result.sunHours || "Check weather";
+                shadeHoursEl.textContent = result.shadeHours || "Check weather";
+                trafficEl.textContent = result.traffic || "No traffic reported";
+            } catch (e) {
+                console.error("Live conditions error:", e);
+                sunHoursEl.textContent = "Unavailable";
+                shadeHoursEl.textContent = "Unavailable";
+                trafficEl.textContent = "Unavailable";
+            } finally {
+                loadingOverlay.style.opacity = '0';
+                setTimeout(() => loadingOverlay.classList.add('hidden'), 500);
+            }
+        }
+
+        // --- AI CHATBOT IMPLEMENTATION ---
+        const chatForm = document.getElementById('chatForm');
+        const chatInput = document.getElementById('chatInput');
+        const chatMessages = document.getElementById('chatMessages');
+
+        function appendMessage(text, isUser) {
+            const msgDiv = document.createElement('div');
+            msgDiv.className = `flex flex-col max-w-[85%] ${isUser ? 'self-end' : 'self-start'}`;
+            
+            const innerSpan = document.createElement('span');
+            innerSpan.className = `px-4 py-2.5 text-sm shadow-sm border ${
+                isUser 
+                ? 'bg-emerald-600 text-white border-emerald-700 rounded-2xl rounded-tr-sm' 
+                : 'bg-white border-slate-200 text-slate-800 rounded-2xl rounded-tl-sm'
+            }`;
+            innerSpan.textContent = text;
+            
+            msgDiv.appendChild(innerSpan);
+            chatMessages.appendChild(msgDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        function appendTypingIndicator() {
+            const msgDiv = document.createElement('div');
+            msgDiv.id = 'typingIndicator';
+            msgDiv.className = 'flex flex-col max-w-[85%] self-start';
+            msgDiv.innerHTML = `
+                <span class="bg-white border border-slate-200 text-slate-500 rounded-2xl rounded-tl-sm px-4 py-2 text-sm shadow-sm flex items-center gap-1">
+                    <span class="w-1.5 h-1.5 bg-slate-400 rounded-full animate-bounce"></span>
+                    <span class="w-1.5 h-1.5 bg-slate-400 rounded-full animate-bounce" style="animation-delay: 0.1s"></span>
+                    <span class="w-1.5 h-1.5 bg-slate-400 rounded-full animate-bounce" style="animation-delay: 0.2s"></span>
+                </span>`;
+            chatMessages.appendChild(msgDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        function removeTypingIndicator() {
+            const ind = document.getElementById('typingIndicator');
+            if(ind) ind.remove();
+        }
+
+        async function fetchAIResponse(userText) {
+            const modelUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
+            const payload = {
+                contents: [{ parts: [{ text: userText }] }],
+                systemInstruction: { parts: [{ text: "You are a local climbing guide expert for the Canal Zone in Clear Creek Canyon, Colorado. Provide short, helpful, conversational answers about climbing, gear, and grades here. Only suggest safe practices." }] }
+            };
+
+            let retries = 5;
+            let delay = 1000;
+            
+            while(retries > 0) {
+                try {
+                    const response = await fetch(modelUrl, {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify(payload)
+                    });
+                    
+                    if (!response.ok) {
+                        // Handle missing/invalid API key gracefully
+                        if(response.status === 400 || response.status === 403) {
+                             return "I'm offline right now because the API key is not configured in this environment, but you can still explore the map and routes!";
+                        }
+                        throw new Error(`API Error: ${response.status}`);
+                    }
+                    
+                    const data = await response.json();
+                    return data.candidates[0].content.parts[0].text;
+                    
+                } catch (e) {
+                    retries--;
+                    if (retries === 0) return "Oops, the connection to the trail network dropped. Please try asking again!";
+                    await new Promise(resolve => setTimeout(resolve, delay));
+                    delay *= 2;
+                }
+            }
+        }
+
+        chatForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const text = chatInput.value.trim();
+            if(!text) return;
+
+            appendMessage(text, true);
+            chatInput.value = '';
+            
+            appendTypingIndicator();
+            const responseText = await fetchAIResponse(text);
+            removeTypingIndicator();
+            appendMessage(responseText, false);
+        });
+
+        // Run Init
+        init();
+
+    </script>
+</body>
+</html>
