@@ -424,11 +424,12 @@
                 return;
             }
 
-            // Using the exact required model and ensuring the URL is properly formatted
-            const modelUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
+            // Using the standard public gemini-2.5-flash model
+            const modelUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
+            
+            // Removed the Google Search tool requirement to ensure compatibility with all API keys
             const payload = {
-                contents: [{ parts: [{ text: "You are a live climbing assistant. Perform a live Google Search for 'US-6 Clear Creek Canyon Colorado traffic'. Based on the current season/date, calculate exactly what hours the South-facing Canal Zone crag will be in the sun, and what hours it will be in the shade today. Return only the requested JSON." }] }],
-                tools: [{ google_search: {} }],
+                contents: [{ parts: [{ text: "You are a climbing assistant. Based on the current date, calculate exactly what hours the South-facing Canal Zone crag will be in the sun, and what hours it will be in the shade today. Also provide a brief generic US-6 traffic estimate. Return only the requested JSON." }] }],
                 generationConfig: {
                     responseMimeType: "application/json",
                     responseSchema: {
@@ -451,8 +452,8 @@
                 });
                 
                 if (!response.ok) {
-                    const err = await response.json();
-                    throw new Error(err.error?.message || `Failed to fetch: ${response.status}`);
+                    const err = await response.json().catch(() => ({}));
+                    throw new Error(err.error?.message || `HTTP ${response.status}`);
                 }
                 
                 const data = await response.json();
@@ -472,9 +473,11 @@
                 trafficEl.textContent = result.traffic || "No traffic reported";
             } catch (e) {
                 console.error("Live conditions error:", e);
-                sunHoursEl.textContent = "AI Error - Check Key";
-                shadeHoursEl.textContent = "AI Error - Check Key";
-                trafficEl.textContent = "AI Error - Check Key";
+                // Display the exact error message so we know why it failed
+                sunHoursEl.textContent = "Error: Check chat";
+                shadeHoursEl.textContent = "Error loading";
+                trafficEl.textContent = "Error loading";
+                appendMessage(`System Error (Live Data): ${e.message}`, false);
             } finally {
                 loadingOverlay.style.opacity = '0';
                 setTimeout(() => loadingOverlay.classList.add('hidden'), 500);
@@ -523,14 +526,14 @@
         }
 
         async function fetchAIResponse(userText) {
-            // Using the exact required model endpoint
-            const modelUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
+            // Using the standard public gemini-2.5-flash model
+            const modelUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
             const payload = {
                 contents: [{ parts: [{ text: userText }] }],
                 systemInstruction: { parts: [{ text: "You are a local climbing guide expert for the Canal Zone in Clear Creek Canyon, Colorado. Provide short, helpful, conversational answers about climbing, gear, and grades here. Only suggest safe practices." }] }
             };
 
-            let retries = 5;
+            let retries = 3;
             let delay = 1000;
             
             while(retries > 0) {
@@ -542,11 +545,8 @@
                     });
                     
                     if (!response.ok) {
-                        // Handle missing/invalid API key gracefully
-                        if(response.status === 400 || response.status === 403) {
-                             return "I'm offline right now because the API key is not configured in this environment, but you can still explore the map and routes!";
-                        }
-                        throw new Error(`API Error: ${response.status}`);
+                        const err = await response.json().catch(() => ({}));
+                        throw new Error(err.error?.message || `API Error: ${response.status}`);
                     }
                     
                     const data = await response.json();
@@ -554,7 +554,10 @@
                     
                 } catch (e) {
                     retries--;
-                    if (retries === 0) return "Oops, the connection to the trail network dropped. Please try asking again!";
+                    if (retries === 0) {
+                        // Return the exact error to the user in the chat
+                        return `Error: ${e.message}. Please check your API key and model access.`;
+                    }
                     await new Promise(resolve => setTimeout(resolve, delay));
                     delay *= 2;
                 }
