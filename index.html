@@ -54,8 +54,8 @@
                 <div class="bg-slate-50 p-3 border-t border-slate-200 flex items-start gap-2">
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-emerald-600 mt-0.5"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
                     <div>
-                        <span class="font-bold text-sm text-slate-800">Parking & Approach</span>
-                        <p class="text-xs text-slate-600">Trailhead parking is located along US-6 at <strong>39.75032, -105.24779</strong>. The crag is very close to this parking area.</p>
+                        <span class="font-bold text-sm text-slate-800">Approach & Location</span>
+                        <p class="text-xs text-slate-600">The crag is located directly off US-6 at <strong>39.75032, -105.24779</strong>.</p>
                     </div>
                 </div>
             </div>
@@ -332,11 +332,10 @@
 
         function initTopoMap() {
             // Coordinates for Canal Zone, Clear Creek Canyon
-            const cragCoords = [39.7508, -105.2485];
-            const parkingCoords = [39.75032, -105.24779];
+            const cragCoords = [39.75032, -105.24779];
             
-            // Center map between parking and crag
-            topoMap = L.map('topoMap').setView([39.7505, -105.2481], 17);
+            // Center map directly on crag
+            topoMap = L.map('topoMap').setView(cragCoords, 17);
             
             // Add OpenTopoMap tiles (excellent for climbing/hiking)
             L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
@@ -355,10 +354,6 @@
             // Add marker for the crag
             cragMarker = L.marker(cragCoords).addTo(topoMap)
                 .bindPopup('<b>Canal Zone Crag</b><br>Select a route from the dropdown below.');
-
-            // Add marker for the Parking Lot
-            L.marker(parkingCoords).addTo(topoMap)
-                .bindPopup('<b>Trailhead Parking</b><br>US-6 Pullout (39.75032, -105.24779)');
         }
 
         // --- DOM UPDATES ---
@@ -368,7 +363,7 @@
                 routeInfoCard.classList.add('hidden');
                 cragMarker.setPopupContent('<b>Canal Zone Crag</b><br>Select a route from the dropdown below.');
                 cragMarker.closePopup();
-                topoMap.setView([39.7505, -105.2481], 17);
+                topoMap.setView([39.75032, -105.24779], 17);
                 return;
             }
 
@@ -388,7 +383,7 @@
                 // Update Map Marker for the selected route
                 cragMarker.setPopupContent(`<b>${route.name}</b> (${route.grade})<br>${route.type} | ${route.length === "var" || route.length === "Unknown" ? route.length : route.length + " ft"}`);
                 cragMarker.openPopup();
-                topoMap.setView([39.7508, -105.2485], 18); // Zoom in slightly when a route is picked
+                topoMap.setView([39.75032, -105.24779], 18); // Zoom in slightly when a route is picked
             }
         }
 
@@ -429,8 +424,8 @@
                 return;
             }
 
-            // Updated to gemini-2.5-flash as requested
-            const modelUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
+            // Using the exact required model and ensuring the URL is properly formatted
+            const modelUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
             const payload = {
                 contents: [{ parts: [{ text: "You are a live climbing assistant. Perform a live Google Search for 'US-6 Clear Creek Canyon Colorado traffic'. Based on the current season/date, calculate exactly what hours the South-facing Canal Zone crag will be in the sun, and what hours it will be in the shade today. Return only the requested JSON." }] }],
                 tools: [{ google_search: {} }],
@@ -455,10 +450,17 @@
                     body: JSON.stringify(payload)
                 });
                 
-                if (!response.ok) throw new Error("Failed to fetch");
+                if (!response.ok) {
+                    const err = await response.json();
+                    throw new Error(err.error?.message || `Failed to fetch: ${response.status}`);
+                }
                 
                 const data = await response.json();
-                const result = JSON.parse(data.candidates[0].content.parts[0].text);
+                let rawText = data.candidates[0].content.parts[0].text;
+                
+                // Sanitize JSON in case the model wraps it in markdown blocks
+                rawText = rawText.replace(/```json/gi, '').replace(/```/g, '').trim();
+                const result = JSON.parse(rawText);
                 
                 if (result.monthIndex !== undefined && result.monthIndex >= 0 && result.monthIndex <= 11) {
                     monthSelect.value = result.monthIndex;
@@ -470,9 +472,9 @@
                 trafficEl.textContent = result.traffic || "No traffic reported";
             } catch (e) {
                 console.error("Live conditions error:", e);
-                sunHoursEl.textContent = "Unavailable";
-                shadeHoursEl.textContent = "Unavailable";
-                trafficEl.textContent = "Unavailable";
+                sunHoursEl.textContent = "AI Error - Check Key";
+                shadeHoursEl.textContent = "AI Error - Check Key";
+                trafficEl.textContent = "AI Error - Check Key";
             } finally {
                 loadingOverlay.style.opacity = '0';
                 setTimeout(() => loadingOverlay.classList.add('hidden'), 500);
@@ -521,8 +523,8 @@
         }
 
         async function fetchAIResponse(userText) {
-            // Updated to gemini-2.5-flash as requested
-            const modelUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
+            // Using the exact required model endpoint
+            const modelUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
             const payload = {
                 contents: [{ parts: [{ text: userText }] }],
                 systemInstruction: { parts: [{ text: "You are a local climbing guide expert for the Canal Zone in Clear Creek Canyon, Colorado. Provide short, helpful, conversational answers about climbing, gear, and grades here. Only suggest safe practices." }] }
