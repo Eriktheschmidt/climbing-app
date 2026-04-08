@@ -424,8 +424,8 @@
                 return;
             }
 
-            // Using the standard public gemini-2.5-flash model
-            const modelUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
+            // Switched to gemini-1.5-flash. "gemini-2.5-flash" doesn't exist on public API keys!
+            const modelUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
             
             // Removed the Google Search tool requirement to ensure compatibility with all API keys
             const payload = {
@@ -526,8 +526,8 @@
         }
 
         async function fetchAIResponse(userText) {
-            // Using the standard public gemini-2.5-flash model
-            const modelUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
+            // Switched to gemini-1.5-flash
+            const modelUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
             const payload = {
                 contents: [{ parts: [{ text: userText }] }],
                 systemInstruction: { parts: [{ text: "You are a local climbing guide expert for the Canal Zone in Clear Creek Canyon, Colorado. Provide short, helpful, conversational answers about climbing, gear, and grades here. Only suggest safe practices." }] }
