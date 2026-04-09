@@ -6,6 +6,7 @@
     <title>Grip and Rip | Canal Zone</title>
     <script src="https://cdn.tailwindcss.com"></script>
     
+    <!-- Leaflet CSS & JS for Real-time Topo Map -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
@@ -80,7 +81,7 @@
         }
         .route-shade .route-text { fill: #3b82f6; opacity: 0.7; }
 
-        /* Active Selection Override - Ignites the route perfectly over the photo */
+        /* Active Selection Override - Ignites the route perfectly */
         .route-group.active .route-path {
             stroke: #fff !important;
             stroke-width: 7px;
@@ -94,11 +95,6 @@
             filter: drop-shadow(0px 0px 10px #fff) !important;
         }
         .route-group.active .route-text { fill: #020617 !important; opacity: 1 !important; }
-        
-        /* Sun Orb */
-        #visualSun {
-            transition: left 0.3s linear, top 0.3s linear, opacity 0.3s linear;
-        }
 
         /* AI Chat Bubbles */
         .chat-bubble-user {
@@ -136,13 +132,13 @@
         }
         input[type=range]::-webkit-slider-thumb {
             -webkit-appearance: none;
-            height: 20px;
-            width: 20px;
+            height: 16px;
+            width: 16px;
             border-radius: 50%;
             background: #ec4899; /* Hot Pink */
             cursor: pointer;
-            margin-top: -8px;
-            box-shadow: 0 0 15px rgba(236, 72, 153, 0.8), 0 0 5px rgba(6, 182, 212, 0.5);
+            margin-top: -6px;
+            box-shadow: 0 0 12px rgba(236, 72, 153, 0.8), 0 0 4px rgba(6, 182, 212, 0.5);
             border: 2px solid #fff;
         }
         input[type=range]::-webkit-slider-runnable-track {
@@ -173,6 +169,7 @@
 </head>
 <body class="min-h-screen flex flex-col pb-10">
 
+    <!-- Navigation Header -->
     <header class="bg-slate-900 border-b border-cyan-900/60 sticky top-0 z-40 shadow-[0_4px_25px_rgba(6,182,212,0.15)]">
         <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
             <div class="flex items-center gap-3">
@@ -191,16 +188,20 @@
         </div>
     </header>
 
-    <main class="flex-grow max-w-5xl mx-auto px-4 py-6 w-full flex flex-col gap-6">
+    <!-- Main Content -->
+    <main class="flex-grow max-w-7xl mx-auto px-4 py-6 w-full flex flex-col lg:flex-row gap-6">
         
-        <div class="w-full space-y-6">
+        <!-- Left Side: Topo & Info (Wider Column) -->
+        <div class="flex-1 space-y-6">
             
+            <!-- Radical Route Radar Section -->
             <div class="bg-slate-900 rounded-xl shadow-[0_8px_30px_rgba(0,0,0,0.5)] border border-slate-800 overflow-hidden">
                 <div class="bg-slate-900 p-3 border-b border-slate-800 flex justify-between items-center relative z-20">
                     <h2 class="font-bold text-slate-200 uppercase tracking-widest text-sm">Radical Route Radar</h2>
                     <span class="text-[10px] bg-cyan-950 text-cyan-300 border border-cyan-500/40 px-3 py-1 rounded-full font-bold font-mono tracking-widest uppercase shadow-[0_0_8px_rgba(6,182,212,0.2)]">Lock Target</span>
                 </div>
                 
+                <!-- SVG Container: Maintains proportional aspect ratio -->
                 <div class="relative w-full bg-[#020617] overflow-hidden aspect-[8/5]" id="topoContainer">
                     
                     <div class="sweep-line"></div>
@@ -225,7 +226,6 @@
                             </linearGradient>
                         </defs>
                         
-                        <!-- Base Gradient & Grid -->
                         <rect width="100%" height="100%" fill="url(#bgFade)" />
                         <rect width="100%" height="100%" fill="url(#retroGrid)" />
 
@@ -242,181 +242,179 @@
                     <!-- Smaller, Cleaner Dynamic Sun Visualizer -->
                     <div id="visualSun" class="absolute w-12 h-12 rounded-full bg-yellow-400 z-10 mix-blend-screen opacity-0 border-[3px] border-white" style="box-shadow: 0 0 25px 10px rgba(250, 204, 21, 0.5); pointer-events: none; transition: left 0.3s linear, top 0.3s linear, opacity 0.3s linear;"></div>
                     
+                    <!-- Dynamic Shade Visualizer Overlay -->
                     <div id="shadeOverlay" class="absolute inset-0 bg-[#020617] mix-blend-multiply z-10 pointer-events-none transition-opacity duration-500 opacity-50"></div>
                     
+                    <!-- Code-Drawn Interactive SVG Overlay -->
                     <svg id="routeSvgOverlay" class="absolute inset-0 w-full h-full z-20" viewBox="0 0 800 500" preserveAspectRatio="none">
-                        </svg>
-                </div>
-            </div>
-
-            <div class="bg-slate-900 p-5 rounded-xl shadow-lg border border-slate-800 flex flex-col gap-5">
-                <div class="flex flex-col sm:flex-row gap-4">
-                    <div class="flex-1">
-                        <label for="routeSelect" class="block text-xs font-bold text-cyan-400 mb-1 font-mono tracking-widest uppercase italic">
-                            > Lock_Target_Route
-                        </label>
-                        <select id="routeSelect" class="w-full bg-[#020617] border border-slate-700 text-slate-200 rounded-lg p-3 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 cursor-pointer font-semibold"></select>
-                    </div>
-                    <div class="flex-1">
-                        <label for="monthSelect" class="block text-xs font-bold text-pink-400 mb-1 font-mono tracking-widest uppercase italic">
-                            > Orbital_Cycle
-                        </label>
-                        <select id="monthSelect" class="w-full bg-[#020617] border border-slate-700 text-slate-200 rounded-lg p-3 focus:outline-none focus:border-pink-500 focus:ring-1 focus:ring-pink-500 cursor-pointer font-semibold">
-                            <option value="0">January (Winter)</option>
-                            <option value="1">February (Winter)</option>
-                            <option value="2">March (Spring)</option>
-                            <option value="3">April (Spring)</option>
-                            <option value="4">May (Summer)</option>
-                            <option value="5">June (Summer)</option>
-                            <option value="6">July (Summer)</option>
-                            <option value="7">August (Summer)</option>
-                            <option value="8">September (Fall)</option>
-                            <option value="9">October (Fall)</option>
-                            <option value="10">November (Winter)</option>
-                            <option value="11">December (Winter)</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div class="bg-[#020617] border border-slate-800 rounded-lg p-4 relative overflow-hidden shadow-inner">
-                    <div class="flex justify-between items-center mb-2">
-                        <label class="block text-xs font-bold text-yellow-400 font-mono tracking-widest uppercase italic">
-                            > Sun_Chaser (Time)
-                        </label>
-                        <span id="timeDisplay" class="text-xl font-bold text-white font-mono bg-slate-900 px-3 py-1 rounded border border-slate-700 shadow-[0_0_10px_rgba(250,204,21,0.15)]">12:00</span>
-                    </div>
-                    <input type="range" id="timeSlider" min="6" max="20" step="0.25" value="12" class="mt-2 relative z-10">
-                    <div class="flex justify-between text-[10px] text-slate-500 font-mono mt-1 font-bold tracking-wider">
-                        <span>06:00 (DAWN)</span>
-                        <span>13:00 (ZENITH)</span>
-                        <span>20:00 (DUSK)</span>
-                    </div>
-                </div>
-            </div>
-
-            <div id="routeInfoCard" class="bg-slate-900 rounded-xl shadow-lg border border-slate-800 hidden overflow-hidden transition-all duration-300">
-                <div class="bg-slate-800 text-white p-4 flex justify-between items-center border-b border-slate-700">
-                    <h3 id="routeName" class="text-2xl font-black tracking-wide retro-gradient-text uppercase italic">Target Send</h3>
-                    <span id="routeGrade" class="bg-gradient-to-r from-pink-500 to-purple-600 text-white px-3 py-1 rounded-md font-bold text-sm font-mono shadow-[0_0_10px_rgba(236,72,153,0.4)]">5.x</span>
+                    </svg>
                 </div>
                 
-                <div class="p-6">
-                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-                        <div class="bg-[#020617] p-3 rounded-lg border border-slate-800 shadow-inner">
-                            <span class="block text-[10px] text-slate-500 uppercase font-bold tracking-widest">Discipline</span>
-                            <span id="routeType" class="font-bold text-cyan-200">Sport</span>
-                        </div>
-                        <div class="bg-[#020617] p-3 rounded-lg border border-slate-800 shadow-inner">
-                            <span class="block text-[10px] text-slate-500 uppercase font-bold tracking-widest">Vert (ft)</span>
-                            <span id="routeLength" class="font-bold text-cyan-200">0'</span>
-                        </div>
-                        <div class="bg-[#020617] p-3 rounded-lg border border-slate-800 shadow-inner">
-                            <span class="block text-[10px] text-slate-500 uppercase font-bold tracking-widest">Hardware</span>
-                            <span id="routeDraws" class="font-bold text-cyan-200">0</span>
-                        </div>
-                        <div class="bg-[#020617] p-3 rounded-lg border border-slate-800 shadow-inner">
-                            <span class="block text-[10px] text-slate-500 uppercase font-bold tracking-widest">Topo ID</span>
-                            <span id="routeKey" class="font-bold text-pink-400 text-lg font-mono">-</span>
+                <!-- SINGLE Compact Sun Chaser Bar docked below map -->
+                <div class="bg-[#020617] border-t border-slate-800 p-3 relative overflow-hidden shadow-inner flex items-center gap-4">
+                    <label class="whitespace-nowrap text-[10px] font-bold text-yellow-400 font-mono tracking-widest uppercase italic hidden sm:block">
+                        > Sun_Chaser
+                    </label>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-yellow-400 sm:hidden"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>
+                    
+                    <div class="flex-grow flex flex-col justify-center px-2 relative top-1">
+                        <input type="range" id="timeSlider" min="6" max="20" step="0.25" value="12" class="w-full relative z-10">
+                        <div class="flex justify-between text-[8px] text-slate-500 font-mono mt-1 font-bold tracking-wider">
+                            <span>06:00 (DAWN)</span>
+                            <span>13:00 (ZENITH)</span>
+                            <span>20:00 (DUSK)</span>
                         </div>
                     </div>
-                    
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <!-- Left Side: Route Exposure & Base Beta -->
-                        <div class="bg-slate-800 border border-slate-700 rounded-lg p-4 relative overflow-hidden shadow-lg flex flex-col justify-between">
-                            <div>
-                                <div class="flex items-center gap-2 mb-3 border-b border-slate-700 pb-2">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-yellow-400"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>
-                                    <h4 class="text-xs font-bold text-slate-200 uppercase tracking-widest font-mono italic">Solar Telemetry</h4>
-                                </div>
-                                <p id="sunShadeDesc" class="text-slate-400 text-sm font-medium leading-relaxed mb-4"></p>
-                                
-                                <h4 class="text-xs font-bold text-slate-400 mb-1 uppercase tracking-widest italic">Database Entry</h4>
-                                <p id="routeDesc" class="text-slate-300 text-sm leading-relaxed">...</p>
-                            </div>
-                        </div>
+                    <span id="timeDisplay" class="text-xs font-bold text-white font-mono bg-slate-900 px-3 py-1 rounded border border-slate-700 shadow-[0_0_10px_rgba(250,204,21,0.15)] shrink-0">12:00</span>
+                </div>
+            </div>
 
-                        <!-- Right Side: Integrated AI Beta Bot & Spray Button -->
-                        <div class="flex flex-col bg-[#020617] border border-slate-700 rounded-lg overflow-hidden shadow-inner h-[320px]">
-                            <div class="bg-slate-800 border-b border-slate-700 p-3 flex justify-between items-center">
-                                <div class="flex items-center gap-2">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#22d3ee" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8V4H8"/><rect width="16" height="12" x="4" y="8" rx="2"/><path d="M2 14h2"/><path d="M20 14h2"/><path d="M15 13v2"/><path d="M9 13v2"/></svg>
-                                    <span class="font-black text-cyan-300 text-xs font-mono uppercase tracking-widest italic">Beta_Bot</span>
-                                </div>
-                                <button id="betaSprayBtn" class="bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-400 hover:to-purple-500 text-white text-[10px] font-bold tracking-widest uppercase font-mono px-3 py-1.5 rounded transition-colors shadow-[0_0_10px_rgba(236,72,153,0.4)] italic flex items-center gap-1 cursor-pointer z-10 relative">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m3 11 18-5v12L3 14v-3z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></svg>
-                                    Spray!
-                                </button>
+            <!-- Target Locks -->
+            <div class="bg-slate-900 p-4 rounded-xl shadow-lg border border-slate-800 flex flex-col sm:flex-row gap-4">
+                <div class="flex-1">
+                    <label for="routeSelect" class="block text-[10px] font-bold text-cyan-400 mb-1 font-mono tracking-widest uppercase italic">
+                        > Lock_Target_Route
+                    </label>
+                    <select id="routeSelect" class="w-full bg-[#020617] border border-slate-700 text-slate-200 rounded-lg p-2.5 text-sm focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 cursor-pointer font-semibold"></select>
+                </div>
+                <div class="flex-1">
+                    <label for="monthSelect" class="block text-[10px] font-bold text-pink-400 mb-1 font-mono tracking-widest uppercase italic">
+                        > Orbital_Cycle
+                    </label>
+                    <select id="monthSelect" class="w-full bg-[#020617] border border-slate-700 text-slate-200 rounded-lg p-2.5 text-sm focus:outline-none focus:border-pink-500 focus:ring-1 focus:ring-pink-500 cursor-pointer font-semibold">
+                        <option value="0">January (Winter)</option>
+                        <option value="1">February (Winter)</option>
+                        <option value="2">March (Spring)</option>
+                        <option value="3">April (Spring)</option>
+                        <option value="4">May (Summer)</option>
+                        <option value="5">June (Summer)</option>
+                        <option value="6">July (Summer)</option>
+                        <option value="7">August (Summer)</option>
+                        <option value="8">September (Fall)</option>
+                        <option value="9">October (Fall)</option>
+                        <option value="10">November (Winter)</option>
+                        <option value="11">December (Winter)</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Dynamic Route Info Panel -->
+            <div id="routeInfoCard" class="bg-slate-900 rounded-xl shadow-lg border border-slate-800 hidden overflow-hidden transition-all duration-300">
+                <div class="bg-slate-800 text-white p-5 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-slate-700 relative">
+                    <div class="flex flex-col gap-2">
+                        <div class="flex items-center gap-3">
+                            <h3 id="routeName" class="text-2xl md:text-3xl font-black tracking-wide retro-gradient-text uppercase italic">Target Send</h3>
+                            <span id="routeGrade" class="bg-gradient-to-r from-pink-500 to-purple-600 text-white px-3 py-1 rounded font-bold text-sm font-mono shadow-[0_0_10px_rgba(236,72,153,0.4)] border border-pink-400/50">5.x</span>
+                        </div>
+                        <div class="flex flex-wrap items-center gap-2 mt-1">
+                            <span class="bg-[#020617] border border-slate-600 text-cyan-300 px-2 py-1 rounded text-[10px] font-bold uppercase tracking-widest font-mono shadow-inner">Vert: <span id="routeLength" class="text-white">0'</span></span>
+                            <span class="bg-[#020617] border border-slate-600 text-cyan-300 px-2 py-1 rounded text-[10px] font-bold uppercase tracking-widest font-mono shadow-inner">Hardware: <span id="routeDraws" class="text-white">0</span></span>
+                            <span class="bg-[#020617] border border-slate-600 text-cyan-300 px-2 py-1 rounded text-[10px] font-bold uppercase tracking-widest font-mono shadow-inner">Type: <span id="routeType" class="text-white">Sport</span></span>
+                            <span class="bg-[#020617] border border-slate-600 text-pink-400 px-2 py-1 rounded text-[10px] font-bold uppercase tracking-widest font-mono shadow-inner">Topo ID: <span id="routeKey" class="text-white">-</span></span>
+                        </div>
+                    </div>
+                    <!-- Integrated Beta Spray Button -->
+                    <button id="betaSprayBtn" class="w-full md:w-auto bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-400 hover:to-purple-500 text-white text-xs font-black tracking-widest uppercase font-mono px-5 py-3 rounded-lg transition-all shadow-[0_0_20px_rgba(236,72,153,0.6)] hover:shadow-[0_0_30px_rgba(236,72,153,0.8)] italic flex items-center justify-center gap-2 border-2 border-pink-300 shrink-0 z-10 scale-100 hover:scale-105 transform">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m3 11 18-5v12L3 14v-3z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></svg>
+                        ACTIVATE BETA SPRAY!
+                    </button>
+                </div>
+                
+                <div class="p-5">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                        <div class="bg-[#020617] border border-slate-800 rounded-lg p-4 shadow-inner">
+                            <h4 class="text-xs font-bold text-slate-400 mb-2 uppercase tracking-widest italic border-b border-slate-800 pb-2">Database Entry</h4>
+                            <p id="routeDesc" class="text-slate-300 text-sm leading-relaxed font-medium">...</p>
+                        </div>
+                        
+                        <div class="bg-slate-800 border border-slate-700 rounded-lg p-4 relative overflow-hidden shadow-lg">
+                            <div class="flex items-center gap-2 mb-3 border-b border-slate-700 pb-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-yellow-400"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>
+                                <h4 class="text-xs font-bold text-slate-200 uppercase tracking-widest font-mono italic">Solar Telemetry</h4>
                             </div>
-                            <div id="chatMessages" class="flex-grow p-3 overflow-y-auto flex flex-col gap-3">
-                                <div class="flex flex-col max-w-[90%] self-start">
-                                    <span class="chat-bubble-bot px-3 py-2 text-xs shadow-sm">
-                                        > SYSTEM_ONLINE<br>> Select a route and hit SPRAY! for radical tips.
-                                    </span>
-                                </div>
-                            </div>
-                            <div class="p-2 bg-slate-800 border-t border-slate-700">
-                                <form id="chatForm" class="flex gap-2">
-                                    <input type="text" id="chatInput" placeholder="Query beta..." class="flex-grow bg-[#020617] border border-slate-700 rounded px-3 py-1.5 text-xs text-cyan-100 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 font-mono shadow-inner" autocomplete="off" required>
-                                    <button type="submit" class="bg-cyan-600 hover:bg-cyan-500 text-white rounded px-3 flex items-center justify-center transition-all shadow-[0_0_8px_rgba(6,182,212,0.4)]">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="22" x2="11" y1="2" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
-                                    </button>
-                                </form>
-                            </div>
+                            <p id="sunShadeDesc" class="text-slate-400 text-sm font-medium leading-relaxed"></p>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Bottom Panels (Grid layout for simplification) -->
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <!-- Bottom Data Panels -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <!-- Live AI Conditions Panel -->
-                <div class="bg-slate-900 rounded-xl shadow-lg border border-slate-800 p-5 relative overflow-hidden flex flex-col h-full">
+                <div class="bg-slate-900 rounded-xl shadow-lg border border-slate-800 p-5 relative overflow-hidden">
                     <div id="liveLoading" class="absolute inset-0 bg-slate-900/95 z-10 flex flex-col items-center justify-center backdrop-blur-sm transition-opacity duration-500">
                         <div class="w-8 h-8 border-4 border-pink-500 border-t-transparent rounded-full animate-spin mb-3 shadow-[0_0_15px_rgba(236,72,153,0.6)]"></div>
-                        <span class="text-xs font-bold text-pink-400 font-mono tracking-widest italic">PULLING LIVE BETA...</span>
+                        <span class="text-[10px] font-bold text-pink-400 font-mono tracking-widest italic">PULLING LIVE BETA...</span>
                     </div>
                     
                     <div class="flex items-center gap-2 mb-4 border-b border-slate-800 pb-3">
                         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-cyan-400"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
-                        <h2 class="font-bold text-slate-200 text-sm uppercase tracking-widest font-mono italic">Live Network Uplink</h2>
+                        <h2 class="font-bold text-slate-200 text-sm uppercase tracking-widest font-mono italic">Network Uplink</h2>
                     </div>
-                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 flex-grow content-start">
-                        <div class="bg-[#020617] p-3 rounded-lg border border-slate-800 shadow-inner">
+                    <div class="flex flex-col gap-3">
+                        <div class="bg-[#020617] p-3 rounded-lg border border-slate-800 shadow-inner flex justify-between items-center">
                             <span class="text-[10px] text-yellow-500/90 font-bold uppercase tracking-widest">☀️ Global Sun</span>
-                            <p id="liveSunHours" class="text-sm font-bold text-slate-200 mt-1 font-mono tracking-wide">...</p>
+                            <p id="liveSunHours" class="text-sm font-bold text-slate-200 font-mono tracking-wide">...</p>
                         </div>
-                        <div class="bg-[#020617] p-3 rounded-lg border border-slate-800 shadow-inner">
+                        <div class="bg-[#020617] p-3 rounded-lg border border-slate-800 shadow-inner flex justify-between items-center">
                             <span class="text-[10px] text-cyan-500/90 font-bold uppercase tracking-widest">☁️ Global Shade</span>
-                            <p id="liveShadeHours" class="text-sm font-bold text-slate-200 mt-1 font-mono tracking-wide">...</p>
+                            <p id="liveShadeHours" class="text-sm font-bold text-slate-200 font-mono tracking-wide">...</p>
                         </div>
-                        <div class="bg-[#020617] p-3 rounded-lg border border-slate-800 shadow-inner">
+                        <div class="bg-[#020617] p-3 rounded-lg border border-slate-800 shadow-inner flex justify-between items-center">
                             <span class="text-[10px] text-pink-500/90 font-bold uppercase tracking-widest">🚦 Route 6 Flow</span>
-                            <p id="liveTraffic" class="text-sm font-bold text-slate-200 mt-1 font-mono tracking-wide">...</p>
+                            <p id="liveTraffic" class="text-sm font-bold text-slate-200 font-mono tracking-wide">...</p>
                         </div>
                     </div>
                 </div>
 
                 <!-- Leaflet Topo Map Section -->
-                <div class="bg-slate-900 rounded-xl shadow-lg border border-slate-800 overflow-hidden flex flex-col h-full">
-                    <div class="bg-slate-900 p-3 border-b border-slate-800 flex justify-between items-center relative z-20 shrink-0">
+                <div class="bg-slate-900 rounded-xl shadow-lg border border-slate-800 overflow-hidden flex flex-col">
+                    <div class="bg-slate-900 p-3 border-b border-slate-800 flex justify-between items-center relative z-20">
                         <h2 class="font-bold text-slate-200 uppercase tracking-widest text-sm">Dropzone Radar</h2>
                     </div>
-                    <div class="p-0 border-b border-slate-800 flex-grow min-h-[200px]">
+                    <div class="p-0 flex-grow min-h-[200px]">
                         <div id="topoMap" class="w-full h-full z-0 relative" style="filter: contrast(1.15) brightness(0.85) sepia(0.3) hue-rotate(180deg);"></div>
-                    </div>
-                    <div class="bg-[#020617] p-3 flex items-start gap-3 relative z-20 shrink-0">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-pink-500 mt-0.5 drop-shadow-[0_0_5px_rgba(236,72,153,0.8)]"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
-                        <div>
-                            <span class="font-bold text-xs text-slate-200 uppercase tracking-wider">Dropzone Coordinates</span>
-                            <p class="text-[10px] text-slate-400 mt-1">US-6 Pullout: <strong class="text-cyan-400 font-mono tracking-wide">39.75032, -105.24779</strong>.</p>
-                        </div>
                     </div>
                 </div>
             </div>
 
         </div>
+
+        <!-- Right Side: AI Assistant Sidebar (RESTORED) -->
+        <div class="lg:w-[380px] w-full flex flex-col bg-slate-900 rounded-xl shadow-lg border border-slate-800 h-[700px] lg:h-auto overflow-hidden">
+            <div class="bg-slate-800 border-b border-slate-700 p-4 flex items-center gap-3 relative z-20">
+                <div class="p-2 bg-gradient-to-br from-cyan-500/20 to-blue-500/20 rounded-lg border border-cyan-500/30 shadow-[0_0_12px_rgba(6,182,212,0.2)]">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#22d3ee" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8V4H8"/><rect width="16" height="12" x="4" y="8" rx="2"/><path d="M2 14h2"/><path d="M20 14h2"/><path d="M15 13v2"/><path d="M9 13v2"/></svg>
+                </div>
+                <div>
+                    <h2 class="font-black text-slate-200 uppercase tracking-widest text-sm font-mono italic text-cyan-300">AI Beta_Bot</h2>
+                    <p class="text-[10px] text-slate-500 uppercase tracking-widest">Powered by Gemini</p>
+                </div>
+            </div>
+            
+            <div id="chatMessages" class="flex-grow p-4 overflow-y-auto flex flex-col gap-4 bg-[#020617] border-b border-slate-800 shadow-inner">
+                <!-- Initial Bot Message -->
+                <div class="flex flex-col max-w-[85%] self-start">
+                    <span class="chat-bubble-bot px-4 py-3 text-sm shadow-sm">
+                        > SYSTEM_ONLINE<br>
+                        > Ready to crush? I'm your AI Beta_Bot for the Canal Zone. Query me below, or lock onto a target route and hit ACTIVATE BETA SPRAY! for radical sequence tips.
+                    </span>
+                </div>
+            </div>
+
+            <div class="p-3 bg-slate-900 relative z-20">
+                <form id="chatForm" class="flex gap-2">
+                    <input type="text" id="chatInput" placeholder="Enter query..." class="flex-grow bg-[#020617] border border-slate-700 rounded-lg px-4 py-2 text-sm text-cyan-100 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 font-mono shadow-inner" autocomplete="off" required>
+                    <button type="submit" class="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white rounded-lg px-4 flex items-center justify-center transition-all shadow-[0_0_12px_rgba(6,182,212,0.4)]">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="22" x2="11" y1="2" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+                    </button>
+                </form>
+            </div>
+        </div>
+
     </main>
 
+    <!-- Settings Modal -->
     <div id="settingsModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 hidden flex items-center justify-center">
         <div class="bg-slate-900 rounded-xl shadow-[0_0_40px_rgba(236,72,153,0.2)] border border-pink-900/50 w-full max-w-md p-6 m-4 relative">
             <div class="flex justify-between items-center mb-6">
@@ -442,6 +440,7 @@
         </div>
     </div>
 
+    <!-- Switch to ES Module to use the Official Google SDK -->
     <script type="module">
         import { GoogleGenerativeAI } from "https://esm.run/@google/generative-ai";
 
@@ -459,14 +458,14 @@
             { id: "A", name: "Cut Loose", grade: "5.11-", length: "75", type: "Bolts", draws: "~10-12", desc: "Solid 11- on the far left. Technical face climbing.", onTopo: true, color: "#ff2a4b", path: "M96,380 L80,340 L72,250 L60,200 L52,120", label: {x: 80, y: 410}, baseSunStart: 9.5, baseSunEnd: 17.5 },
             { id: "B", name: "Bear's Choice", grade: "5.10", length: "75", type: "Bolts", draws: "~10-12", desc: "A popular moderate line. Consistent sustained climbing.", onTopo: true, color: "#ff2a4b", path: "M96,380 L108,340 L116,250 L116,200 L104,120", label: {x: 120, y: 390}, baseSunStart: 9.5, baseSunEnd: 17.5 },
             { id: "C", name: "Box of Rain", grade: "5.8", length: "75", type: "Bolts", draws: "~10-12", desc: "Fun, well-protected 5.8 on good rock.", onTopo: true, color: "#ff2a4b", path: "M160,390 L156,350 L152,250 L144,200 L132,110", label: {x: 160, y: 420}, baseSunStart: 9.25, baseSunEnd: 17.25,
-              hardcodedBeta: "First bolt crux, stay centered. Cruiser buckets after bolt 3. Watch for the 'box' hold near the top—it's super tubular!" },
+              hardcodedBeta: "> CRUX LOCK: The first bolt guards some gnarly little crimps.\n> WHEN TO RIP: Once you clip bolt 3, you hit cruiser jugs—RIP IT to the chains!\n> DO NOT SLIP: The top-out slab gets sketchy by the 'box' hold. Trust your feet and stay radical!" },
             { id: "D", name: "Ripple", grade: "5.8", length: "75", type: "Bolts", draws: "~10-12", desc: "Cruisy and fun moderate. Great warmup.", onTopo: true, color: "#ff2a4b", path: "M204,400 L200,325 L204,250 L200,200 L196,110", label: {x: 204, y: 430}, baseSunStart: 9.0, baseSunEnd: 17.0 },
             { id: "E", name: "Venice Beach", grade: "5.8", length: "75", type: "Bolts", draws: "~10-12", desc: "Another classic 5.8 in the main block.", onTopo: true, color: "#ff2a4b", path: "M260,390 L252,325 L248,250 L248,200 L244,120", label: {x: 260, y: 420}, baseSunStart: 9.0, baseSunEnd: 17.0 },
             { id: "F", name: "Holiday Road", grade: "5.8", length: "70", type: "Bolts", draws: "~9-11", desc: "Slightly shorter but very solid 5.8 climbing.", onTopo: true, color: "#ff2a4b", path: "M308,435 L296,375 L292,300 L292,225 L296,155", label: {x: 308, y: 460}, baseSunStart: 9.0, baseSunEnd: 17.0 },
             { id: "G", name: "Beasto", grade: "5.10", length: "70", type: "Bolts", draws: "~9-11", desc: "Starts getting into the steeper/blockier section.", onTopo: true, color: "#ff2a4b", path: "M450,440 L446,375 L442,300 L446,225 L458,125", label: {x: 450, y: 465}, baseSunStart: 8.75, baseSunEnd: 16.5 },
             { id: "H", name: "Turkey Jerky", grade: "5.10", length: "80", type: "Bolts", draws: "~11-13", desc: "Longer 5.10 requiring decent endurance.", onTopo: true, color: "#ff2a4b", path: "M505,450 L501,425 L497,350 L501,250 L517,75", label: {x: 505, y: 475}, baseSunStart: 8.75, baseSunEnd: 16.5 },
             { id: "I", name: "Walking With A Ghost", grade: "5.11", length: "55", type: "Bolts", draws: "~7-8", desc: "Punchy, shorter 5.11. Has 2 different starts.", onTopo: true, color: "#ff2a4b", path: "M560,430 L552,400 L556,325 L560,250 L568,225", label: {x: 560, y: 450}, baseSunStart: 8.5, baseSunEnd: 16.0,
-              hardcodedBeta: "Left start is gnarly crimps. Right start is power moves on pockets. Crux is matching the thin edge at bolt 4. Don't pump out, send it!" },
+              hardcodedBeta: "> CRUX LOCK: Dial in on those razor crimps on the left start.\n> WHEN TO RIP: You'll hit a sweet two-finger pocket mid-route—lock off and RIP the dynamic throw to the ledge!\n> DO NOT SLIP: The 4th bolt clip is pumpy and desperate. Do not slip while pulling slack!" },
             { id: "J", name: "Ivy League", grade: "5.10-", length: "50", type: "Bolts", draws: "~6-8", desc: "Short, punchy and sweet 10-.", onTopo: true, color: "#ff2a4b", path: "M615,430 L607,400 L611,325 L615,250 L623,225", label: {x: 615, y: 455}, baseSunStart: 8.5, baseSunEnd: 16.0 },
             { id: "K", name: "Panama Red", grade: "5.10-", length: "50", type: "Bolts", draws: "~6-8", desc: "Bouldery start, fairly short route.", onTopo: true, color: "#ff2a4b", path: "M670,400 L666,375 L666,300 L666,225 L670,150", label: {x: 670, y: 430}, baseSunStart: 8.25, baseSunEnd: 15.5 },
             { id: "L", name: "Route Canal", grade: "5.9", length: "50", type: "Gear/Bolt", draws: "Mixed", desc: "Mixed protection line. Bring a light rack.", onTopo: true, color: "#ff2a4b", path: "M725,420 L721,350 L725,275 L725,225 L721,175", label: {x: 725, y: 445}, baseSunStart: 8.25, baseSunEnd: 15.5 },
@@ -529,7 +528,7 @@
             timeSlider.addEventListener('input', updateSolarSimulation);
             betaSprayBtn.addEventListener('click', triggerBetaSpray);
 
-            // Initial Simulation Update
+            // Initial Update
             updateSolarSimulation();
         }
 
@@ -591,7 +590,6 @@
         // --- INTERACTIVE IMAGE MAP FUNCTIONS ---
         function renderTopoPaths() {
             routeSvgOverlay.innerHTML = ''; 
-            // SVG scaled to match photo container
             routes.filter(r => r.onTopo && r.path && r.label).forEach(route => {
                 const groupEl = document.createElementNS("http://www.w3.org/2000/svg", "g");
                 groupEl.setAttribute('class', 'route-group route-shade'); 
@@ -600,7 +598,7 @@
                 const pathEl = document.createElementNS("http://www.w3.org/2000/svg", "path");
                 pathEl.setAttribute('d', route.path);
                 pathEl.setAttribute('class', 'route-path');
-                pathEl.setAttribute('stroke', '#ff2a4b'); // Unified laser red
+                pathEl.setAttribute('stroke', '#ff2a4b'); 
                 
                 const circleEl = document.createElementNS("http://www.w3.org/2000/svg", "circle");
                 circleEl.setAttribute('cx', route.label.x);
@@ -662,14 +660,11 @@
             if (month >= 4 && month <= 8) seasonOffset = 1; // Summer
             else if (month >= 10 || month <= 1) seasonOffset = -1.5; // Winter
             
-            // Map 6:00 to 20:00 across the container width
             const sunProgress = (time - 6) / 14; 
-            // Arc formula for Y height
             const sunHeight = Math.pow((time - 13) / 7, 2) * 60; 
             
-            // Offset left by 24px (half of 48px width)
             visualSun.style.left = `calc(${sunProgress * 100}% - 24px)`;
-            visualSun.style.top = `calc(${sunHeight}% + 10px)`; // Offset slightly from top
+            visualSun.style.top = `calc(${sunHeight}% + 10px)`; 
             
             if (time < (7 - seasonOffset) || time > (19 + seasonOffset)) {
                 visualSun.style.opacity = '0';
@@ -729,7 +724,7 @@
                         model: "gemini-2.5-flash-preview-09-2025",
                         systemInstruction: "You are a rad 80s computer terminal providing specific, technical, but super-attitude filled beta (climbing tips) for routes at the Canal Zone crag. Use lingo like 'gnarly crimp', 'pockets', 'high step', 'jug', 'dynamic move', 'send it'."
                     });
-                    const prompt = `Spray some radical 80s beta (hold-specific tips) for completing the route named "${route.name}" which is graded ${route.grade}. Assume the climber is stuck. Keep it to a few concise, punchy tips.`;
+                    const prompt = `Spray some radical 80s beta for the rock climbing route named "${route.name}" (Grade: ${route.grade}). Give very clear instructions on specific holds (crimps, jugs, slopers). Tell the user exactly when to 'RIP' (go for a dynamic/power move) and warn them exactly where 'NOT TO SLIP' (the crux or sketchy section). Format as bullet points using >. Keep it to 3-4 punchy, concise sentences.`;
                     const result = await model.generateContent(prompt);
                     const response = await result.response;
                     appendMessage(`> SPRAYING AI BETA FOR ${route.name.toUpperCase()}:`, false);
@@ -740,7 +735,7 @@
                     topoContainer.classList.remove('beta-active');
                 }
             } else {
-                appendMessage("> ERROR: Beta Archive incomplete for this route and Mainframe Offline. Try Box of Rain or Walking With A Ghost for hardcoded beta.", false);
+                appendMessage("> ERROR: Beta Archive incomplete for this route and Mainframe Offline. Enter your API Key, or try Box of Rain / Walking With A Ghost for hardcoded beta.", false);
                 topoContainer.classList.remove('beta-active');
             }
         }
@@ -823,7 +818,6 @@
             loadingOverlay.style.opacity = '1';
 
             try {
-                // Initializing Gemini
                 const model = genAI.getGenerativeModel({
                     model: "gemini-2.5-flash-preview-09-2025",
                     generationConfig: { responseMimeType: "application/json" }
