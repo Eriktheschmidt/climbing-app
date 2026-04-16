@@ -67,6 +67,21 @@
             justify-content: center;
         }
 
+        /* Custom Map Tooltip */
+        .crag-tooltip {
+            background-color: rgba(15, 23, 42, 0.95);
+            border: 2px solid #22d3ee;
+            color: #22d3ee;
+            font-family: 'Space Mono', monospace;
+            font-weight: bold;
+            font-size: 12px;
+            box-shadow: 3px 3px 0px #000;
+            padding: 4px 8px;
+            border-radius: 4px;
+        }
+        .leaflet-tooltip-left.crag-tooltip::before { border-left-color: #22d3ee; }
+        .leaflet-tooltip-right.crag-tooltip::before { border-right-color: #22d3ee; }
+
         /* Sleek retro range slider */
         input[type=range] {
             -webkit-appearance: none; 
@@ -109,6 +124,10 @@
             background-position: right 0.5rem center;
             background-size: 1em;
         }
+
+        select.pink-chevron {
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23ec4899' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+        }
     </style>
 </head>
 <body class="font-sans antialiased bg-[#0f172a] text-slate-200 h-[100dvh] flex flex-col overflow-hidden selection:bg-neon-pink selection:text-white">
@@ -117,13 +136,19 @@
     <header class="bg-[#1e293b] border-b-2 border-neon-pink px-4 sm:px-6 py-3 flex justify-between items-center z-10 shrink-0 shadow-[0_4px_15px_rgba(236,72,153,0.15)] relative">
         <div class="flex items-center gap-2 sm:gap-3">
             <svg class="w-7 h-7 sm:w-8 sm:h-8 text-neon-cyan" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-            <h1 class="text-xl sm:text-2xl font-black tracking-widest text-white uppercase italic">Send<span class="text-neon-pink">Tracker</span></h1>
+            <h1 class="text-xl sm:text-2xl font-black tracking-widest text-white uppercase italic cursor-pointer hover:text-neon-cyan transition-colors" onclick="document.getElementById('crag-selector').value = 'home'; switchCrag('home');">Send<span class="text-neon-pink">Tracker</span></h1>
         </div>
         
-        <!-- Global Crag Selector -->
-        <div class="flex items-center gap-2">
-            <label for="crag-selector" class="text-[10px] font-retro text-slate-400 uppercase tracking-widest hidden sm:block">Location:</label>
-            <select id="crag-selector" onchange="switchCrag(this.value)" class="bg-[#0f172a] text-neon-cyan text-xs font-retro uppercase tracking-widest border-2 border-slate-700 rounded-sm pl-3 pr-8 py-1.5 outline-none focus:border-neon-cyan focus:ring-1 focus:ring-neon-cyan cursor-pointer transition-colors shadow-sm w-40 sm:w-56 truncate">
+        <!-- Global Area & Crag Selector -->
+        <div class="flex items-center gap-1 sm:gap-2">
+            <select id="area-selector" class="pink-chevron bg-[#0f172a] text-neon-pink text-[9px] sm:text-xs font-retro uppercase tracking-widest border-2 border-slate-700 rounded-sm pl-2 pr-6 py-1.5 outline-none focus:border-neon-pink focus:ring-1 focus:ring-neon-pink cursor-pointer transition-colors shadow-sm w-24 sm:w-48 truncate">
+                <option value="ccc">Clear Creek Canyon</option>
+            </select>
+            
+            <span class="text-slate-600 font-retro text-xs hidden sm:block">&rsaquo;</span>
+            
+            <select id="crag-selector" onchange="switchCrag(this.value)" class="bg-[#0f172a] text-neon-cyan text-[9px] sm:text-xs font-retro uppercase tracking-widest border-2 border-slate-700 rounded-sm pl-2 pr-6 py-1.5 outline-none focus:border-neon-cyan focus:ring-1 focus:ring-neon-cyan cursor-pointer transition-colors shadow-sm w-28 sm:w-48 truncate">
+                <option value="home">-- Overview --</option>
                 <option value="canal-zone">Canal Zone</option>
                 <option value="wall-of-the-90s">Wall of the '90s</option>
             </select>
@@ -131,32 +156,43 @@
     </header>
 
     <!-- Main Content Layout -->
-    <main class="flex-grow flex flex-col-reverse lg:flex-row overflow-hidden min-h-0">
+    <main class="flex-grow flex flex-col-reverse lg:flex-row overflow-hidden min-h-0 relative">
         
-        <!-- LEFT PANEL (Bottom on Mobile): Crag Info & Routes -->
+        <!-- LEFT PANEL: Dynamic Container -->
         <div class="w-full lg:w-2/5 xl:w-1/3 bg-[#0f172a] flex flex-col border-r border-slate-700 z-10 flex-1 lg:flex-none lg:h-full relative overflow-hidden shrink-0">
             
-            <!-- MAIN VIEW: Crag Info & Route List -->
-            <div id="main-list-view" class="flex flex-col h-full w-full absolute inset-0 transition-transform duration-300 transform translate-x-0">
+            <!-- STATE 1: HOME DIRECTORY VIEW -->
+            <div id="home-directory-view" class="flex flex-col h-full w-full absolute inset-0 z-30 bg-[#0f172a] transition-transform duration-300 transform translate-x-0 overflow-y-auto custom-scrollbar p-4 sm:p-6">
+                <div class="mb-6">
+                    <h2 class="text-3xl sm:text-4xl font-black text-white mb-2 tracking-tight uppercase italic">Clear Creek Canyon</h2>
+                </div>
+                
+                <div id="directory-container" class="space-y-4">
+                    <!-- Directory Cards injected via JS -->
+                </div>
+            </div>
+
+            <!-- STATE 2: MAIN CRAG ROUTE LIST VIEW -->
+            <div id="main-list-view" class="flex flex-col h-full w-full absolute inset-0 z-20 bg-[#0f172a] transition-transform duration-300 transform translate-x-full">
                 <!-- Info Header -->
                 <div class="p-4 sm:p-5 border-b-2 border-slate-800 shrink-0 bg-[#1e293b]">
                     <div class="flex items-center gap-2 text-[10px] sm:text-[11px] font-retro text-neon-cyan uppercase tracking-widest mb-1">
                         <span>CO</span> <span class="text-slate-500">&rsaquo;</span> <span>Clear Creek</span>
                     </div>
-                    <h2 id="ui-crag-name" class="text-3xl sm:text-4xl font-black text-white mb-2 tracking-tight">Canal Zone</h2>
+                    <h2 id="ui-crag-name" class="text-3xl sm:text-4xl font-black text-white mb-2 tracking-tight">Crag Name</h2>
                     <div class="flex flex-wrap items-center gap-3 sm:gap-4 text-xs font-retro text-slate-400 mb-3">
-                        <span class="flex items-center gap-1.5"><svg class="w-4 h-4 text-neon-pink" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path></svg> <span id="ui-crag-coords">39.7503, -105.2478</span></span>
-                        <span class="flex items-center gap-1.5 text-neon-yellow border border-neon-yellow/30 bg-neon-yellow/10 px-2 py-0.5 rounded-sm"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg> <span id="ui-crag-aspect">SOUTH FACING</span></span>
+                        <span class="flex items-center gap-1.5"><svg class="w-4 h-4 text-neon-pink" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path></svg> <span id="ui-crag-coords">0.0, 0.0</span></span>
+                        <span class="flex items-center gap-1.5 text-neon-yellow border border-neon-yellow/30 bg-neon-yellow/10 px-2 py-0.5 rounded-sm"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg> <span id="ui-crag-aspect">ASPECT</span></span>
                     </div>
                     <p id="ui-crag-desc" class="text-slate-400 text-xs sm:text-sm leading-relaxed line-clamp-2">
-                        The first crag on the left heading up Clear Creek... With excellent CCC rock, the crag holds shade through the mornings until around 2:00 in the summer.
+                        Description goes here...
                     </p>
                 </div>
 
                 <!-- Sorting Toolbar -->
                 <div class="px-4 sm:px-5 py-2.5 bg-[#0f172a] border-b-2 border-slate-800 flex justify-between items-center shrink-0 z-10 shadow-md">
                     <span class="text-[10px] font-retro text-slate-500 uppercase tracking-widest font-bold">
-                        <span id="route-count">29</span> Routes
+                        <span id="route-count">0</span> Routes
                     </span>
                     <div class="flex items-center gap-2">
                         <label for="sort-select" class="text-[10px] font-retro text-slate-400 uppercase tracking-widest hidden sm:block">Sort:</label>
@@ -173,8 +209,8 @@
                 </div>
             </div>
 
-            <!-- DETAIL VIEW: Single Route Info -->
-            <div id="route-detail-view" class="flex flex-col h-full w-full absolute inset-0 bg-[#0f172a] z-20 transition-transform duration-300 transform translate-x-full overflow-y-auto custom-scrollbar shadow-[-10px_0_20px_rgba(0,0,0,0.5)]">
+            <!-- STATE 3: SINGLE ROUTE DETAIL VIEW -->
+            <div id="route-detail-view" class="flex flex-col h-full w-full absolute inset-0 bg-[#0f172a] z-40 transition-transform duration-300 transform translate-x-full overflow-y-auto custom-scrollbar shadow-[-10px_0_20px_rgba(0,0,0,0.5)]">
                 
                 <!-- Detail Header -->
                 <div class="sticky top-0 bg-[#1e293b]/95 backdrop-blur-md border-b-2 border-neon-cyan p-4 shrink-0 z-10">
@@ -215,13 +251,13 @@
             </div>
         </div>
 
-        <!-- RIGHT PANEL (Top on Mobile): Interactive Sun Map -->
+        <!-- RIGHT PANEL (Top on Mobile): Map -->
         <div class="w-full lg:w-3/5 xl:w-2/3 h-[40dvh] lg:h-full relative flex flex-col shrink-0 border-b-2 lg:border-b-0 lg:border-l-2 border-slate-700">
             <!-- Map Container -->
             <div id="map" class="absolute inset-0 bg-[#1a1a1a]"></div>
 
-            <!-- COMPACT Map UI Overlay -->
-            <div class="absolute bottom-2 lg:bottom-4 left-1/2 transform -translate-x-1/2 w-[95%] max-w-sm lg:max-w-md bg-[#1e293b]/90 backdrop-blur-md rounded border border-neon-cyan p-2 z-[1000] retro-shadow-cyan transition-all">
+            <!-- COMPACT Map UI Overlay (Hidden in Global Overview) -->
+            <div id="sun-tracker-ui" class="absolute bottom-2 lg:bottom-4 left-1/2 transform -translate-x-1/2 w-[95%] max-w-sm lg:max-w-md bg-[#1e293b]/90 backdrop-blur-md rounded border border-neon-cyan p-2 z-[1000] retro-shadow-cyan transition-all hidden">
                 <div class="flex items-center gap-3">
                     <!-- Date Output -->
                     <span id="date-display" class="text-neon-yellow font-retro font-bold text-[10px] lg:text-xs whitespace-nowrap w-12 lg:w-14 text-right">
@@ -318,8 +354,11 @@
         };
 
         // Store the active crag ID globally
-        let currentCragId = "canal-zone";
-        let activeRoutes = [];
+        let currentCragId = "home";
+        let map; // Define map globally
+        let sunRaysLayer;
+        let cragOverviewLayer;
+        let cragLocation;
 
         // --- 2. INITIALIZATION & STATE SWITCHING ---
 
@@ -336,25 +375,100 @@
 
         function switchCrag(cragId) {
             currentCragId = cragId;
-            const crag = cragsDatabase[cragId];
+            document.getElementById('crag-selector').value = cragId;
             
-            // Update UI Headers
-            document.getElementById('ui-crag-name').innerText = crag.name;
-            document.getElementById('ui-crag-coords').innerText = `${crag.lat.toFixed(4)}, ${crag.lng.toFixed(4)}`;
-            document.getElementById('ui-crag-aspect').innerText = crag.aspect;
-            document.getElementById('ui-crag-desc').innerText = crag.description;
-            document.getElementById('route-count').innerText = crag.routes.length;
-            
-            // Reset sort dropdown to default Left to Right
-            document.getElementById('sort-select').value = 'ltr';
+            if (cragId === 'home') {
+                // View 1: Home Overview
+                document.getElementById('home-directory-view').classList.remove('translate-x-full', '-translate-x-full');
+                document.getElementById('main-list-view').classList.add('translate-x-full');
+                document.getElementById('route-detail-view').classList.add('translate-x-full');
+                
+                // Hide Map Tools
+                document.getElementById('sun-tracker-ui').classList.add('hidden');
+                
+                sunRaysLayer.clearLayers();
+                cragOverviewLayer.clearLayers();
+                
+                const bounds = L.latLngBounds();
+                
+                // Add pins to map & build directory
+                const directoryContainer = document.getElementById('directory-container');
+                directoryContainer.innerHTML = '';
+                
+                for(let key in cragsDatabase) {
+                    const crag = cragsDatabase[key];
+                    bounds.extend([crag.lat, crag.lng]);
+                    
+                    // Add Map Marker
+                    const marker = L.circleMarker([crag.lat, crag.lng], { 
+                        color: '#22d3ee', 
+                        fillColor: '#22d3ee', 
+                        fillOpacity: 0.5, 
+                        radius: 8,
+                        weight: 2
+                    }).addTo(cragOverviewLayer);
+                    
+                    // Permanent retro tooltip next to marker
+                    marker.bindTooltip(crag.name, { 
+                        permanent: true, 
+                        direction: 'right', 
+                        className: 'crag-tooltip',
+                        offset: [10, 0]
+                    });
+                    
+                    // Click map marker -> open crag
+                    marker.on('click', () => switchCrag(key));
+                    
+                    // Build Left Panel Directory Card
+                    const card = `
+                        <div onclick="switchCrag('${key}')" class="retro-card bg-[#1e293b] p-4 rounded-lg cursor-pointer group flex flex-col justify-between">
+                            <div class="flex justify-between items-start mb-2">
+                                <h3 class="text-xl font-bold text-white group-hover:text-neon-cyan transition-colors">${crag.name}</h3>
+                                <span class="bg-slate-900 text-neon-pink font-retro text-[10px] font-bold px-2 py-1 rounded border border-neon-pink shadow-[2px_2px_0px_#ec4899]">${crag.routes.length} ROUTES</span>
+                            </div>
+                            <div class="text-xs font-retro text-slate-400 mb-2">${crag.aspect}</div>
+                            <p class="text-sm text-slate-400 line-clamp-2 group-hover:text-slate-300 transition-colors">${crag.description}</p>
+                        </div>
+                    `;
+                    directoryContainer.insertAdjacentHTML('beforeend', card);
+                }
+                
+                // Zoom out to show all crags
+                if(Object.keys(cragsDatabase).length > 0) {
+                    map.fitBounds(bounds, { padding: [50, 50], maxZoom: 14 });
+                }
+                
+            } else {
+                // View 2: Detailed Crag View
+                const crag = cragsDatabase[cragId];
+                
+                // Toggle UI panels
+                document.getElementById('home-directory-view').classList.add('-translate-x-full');
+                document.getElementById('main-list-view').classList.remove('translate-x-full', '-translate-x-10');
+                document.getElementById('route-detail-view').classList.add('translate-x-full');
+                
+                // Show Map Tools
+                document.getElementById('sun-tracker-ui').classList.remove('hidden');
+                
+                // Update UI Headers
+                document.getElementById('ui-crag-name').innerText = crag.name;
+                document.getElementById('ui-crag-coords').innerText = `${crag.lat.toFixed(4)}, ${crag.lng.toFixed(4)}`;
+                document.getElementById('ui-crag-aspect').innerText = crag.aspect;
+                document.getElementById('ui-crag-desc').innerText = crag.description;
+                document.getElementById('route-count').innerText = crag.routes.length;
+                
+                // Reset sort dropdown to default
+                document.getElementById('sort-select').value = 'ltr';
 
-            // Map Updates
-            cragLocation = L.latLng(crag.lat, crag.lng);
-            map.setView([crag.lat, crag.lng], 16);
-            
-            // Re-render routes and map features
-            sortRoutes('ltr');
-            updateMapFeatures();
+                // Map Updates
+                cragOverviewLayer.clearLayers(); // clear overview markers
+                cragLocation = L.latLng(crag.lat, crag.lng);
+                map.setView([crag.lat, crag.lng], 16);
+                
+                // Re-render routes and map features
+                sortRoutes('ltr');
+                updateMapFeatures();
+            }
         }
 
         // --- 3. SORTING & LIST LOGIC ---
@@ -375,6 +489,7 @@
         }
 
         function sortRoutes(method) {
+            if(currentCragId === 'home') return;
             const currentRoutes = cragsDatabase[currentCragId].routes;
             let sortedRoutes = [...currentRoutes];
             if (method === 'diff') {
@@ -427,6 +542,7 @@
         let typeWriterTimeout; 
 
         function openRouteDetail(index) {
+            if(currentCragId === 'home') return;
             const activeCrag = cragsDatabase[currentCragId];
             const route = activeCrag.routes[index];
             
@@ -477,10 +593,10 @@
         }
 
         // --- 5. INITIALIZE MAP ---
-        const initialCrag = cragsDatabase[currentCragId];
-        const map = L.map('map', {
+        // Initialize at a central point. (Golden, CO roughly)
+        map = L.map('map', {
             zoomControl: false 
-        }).setView([initialCrag.lat, initialCrag.lng], 16);
+        }).setView([39.75, -105.25], 13);
 
         L.control.zoom({ position: 'topright' }).addTo(map);
 
@@ -490,9 +606,8 @@
         }).addTo(map);
 
         // --- 6. MAP VARIABLES ---
-        let cragLocation = L.latLng(initialCrag.lat, initialCrag.lng);
-        let cragMarker = null;
-        let sunRaysLayer = L.layerGroup().addTo(map);
+        sunRaysLayer = L.layerGroup().addTo(map);
+        cragOverviewLayer = L.layerGroup().addTo(map);
         
         const slider = document.getElementById('day-slider');
         const dateDisplay = document.getElementById('date-display');
@@ -504,9 +619,12 @@
 
         // --- 7. MAP EVENT LISTENERS ---
         map.on('click', function(e) {
-            cragLocation = e.latlng;
-            document.getElementById('ui-crag-coords').innerText = `${e.latlng.lat.toFixed(4)}, ${e.latlng.lng.toFixed(4)}`;
-            updateMapFeatures();
+            // Only move the sun tracker if we are actively viewing a specific crag
+            if(currentCragId !== 'home') {
+                cragLocation = e.latlng;
+                document.getElementById('ui-crag-coords').innerText = `${e.latlng.lat.toFixed(4)}, ${e.latlng.lng.toFixed(4)}`;
+                updateMapFeatures();
+            }
         });
 
         map.on('zoomend', updateMapFeatures);
@@ -514,20 +632,22 @@
 
         setTimeout(() => {
             map.invalidateSize();
-            updateMapFeatures();
+            if(currentCragId !== 'home') updateMapFeatures();
         }, 100);
 
         new ResizeObserver(() => {
             map.invalidateSize();
-            updateMapFeatures();
+            if(currentCragId !== 'home') updateMapFeatures();
         }).observe(document.getElementById('map'));
 
 
         // --- 8. SUN RAY LOGIC ---
         function updateMapFeatures() {
+            if(currentCragId === 'home') return; // Don't draw rays on the global overview
+            
             sunRaysLayer.clearLayers();
 
-            cragMarker = L.circleMarker(cragLocation, {
+            L.circleMarker(cragLocation, {
                 radius: 30, 
                 fillColor: "#ec4899", 
                 color: "#ec4899",
@@ -624,9 +744,7 @@
         }
 
         // --- 9. TRIGGER INITIAL RENDER ---
-        // Calling this after all necessary map variables and layers are fully initialized 
-        // to prevent 'cragLocation is not defined' errors.
-        switchCrag('canal-zone');
+        switchCrag('home');
     </script>
 </body>
 </html>
