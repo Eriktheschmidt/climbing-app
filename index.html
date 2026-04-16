@@ -43,7 +43,7 @@
     <style>
         /* 80s Hard Shadows */
         .retro-shadow-pink { box-shadow: 4px 4px 0px 0px #ec4899; }
-        .retro-shadow-cyan { box-shadow: 4px 4px 0px 0px #22d3ee; }
+        .retro-shadow-cyan { box-shadow: 3px 3px 0px 0px #22d3ee; }
         
         /* Route Card Hover Effects */
         .retro-card { border: 2px solid #334155; transition: all 0.15s ease-out; }
@@ -66,29 +66,29 @@
             justify-content: center;
         }
 
-        /* Styling the retro range slider */
+        /* Sleek retro range slider */
         input[type=range] {
             -webkit-appearance: none; 
             background: transparent; 
         }
         input[type=range]::-webkit-slider-thumb {
             -webkit-appearance: none;
-            height: 28px;
-            width: 14px;
-            border-radius: 4px;
+            height: 20px;
+            width: 10px;
+            border-radius: 2px;
             background: #ec4899; /* Neon Pink */
             cursor: pointer;
-            margin-top: -10px; 
-            border: 2px solid #fff;
+            margin-top: -7px; 
+            border: 1px solid #fff;
             box-shadow: 2px 2px 0px #000;
         }
         input[type=range]::-webkit-slider-runnable-track {
             width: 100%;
-            height: 8px;
+            height: 6px;
             cursor: pointer;
             background: #334155;
-            border: 2px solid #0f172a;
-            border-radius: 4px;
+            border: 1px solid #0f172a;
+            border-radius: 3px;
         }
         
         /* Custom scrollbar */
@@ -98,6 +98,15 @@
             background-color: #334155;
             border-radius: 0px;
             border: 1px solid #1e293b;
+        }
+
+        /* Select Dropdown Styling */
+        select {
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2322d3ee' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 0.25rem center;
+            background-size: 1em;
         }
     </style>
 </head>
@@ -132,6 +141,20 @@
                     <p class="text-slate-400 text-xs sm:text-sm leading-relaxed line-clamp-2">
                         The first crag on the left heading up Clear Creek... With excellent CCC rock, the crag holds shade through the mornings until around 2:00 in the summer.
                     </p>
+                </div>
+
+                <!-- Sorting Toolbar -->
+                <div class="px-4 sm:px-5 py-2.5 bg-[#0f172a] border-b-2 border-slate-800 flex justify-between items-center shrink-0 z-10 shadow-md">
+                    <span class="text-[10px] font-retro text-slate-500 uppercase tracking-widest font-bold">
+                        <span id="route-count">29</span> Routes
+                    </span>
+                    <div class="flex items-center gap-2">
+                        <label for="sort-select" class="text-[10px] font-retro text-slate-400 uppercase tracking-widest hidden sm:block">Sort:</label>
+                        <select id="sort-select" onchange="sortRoutes(this.value)" class="bg-[#1e293b] text-neon-cyan text-[10px] sm:text-xs font-retro uppercase tracking-widest border border-slate-700 rounded-sm pl-2 pr-6 py-1 outline-none focus:border-neon-cyan focus:ring-1 focus:ring-neon-cyan cursor-pointer transition-colors shadow-sm">
+                            <option value="ltr">Left &rsaquo; Right</option>
+                            <option value="diff">Difficulty</option>
+                        </select>
+                    </div>
                 </div>
 
                 <!-- Routes List (Scrollable) -->
@@ -174,7 +197,8 @@
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
                             Beta Terminal
                         </h4>
-                        <div class="bg-black border-l-4 border-neon-pink rounded-r-lg p-4 text-xs sm:text-sm text-green-400 leading-relaxed font-retro break-words shadow-inner" id="detail-info">
+                        <!-- whitespace-pre-wrap allows \n characters to render as real line breaks in the text content -->
+                        <div class="bg-black border-l-4 border-neon-pink rounded-r-lg p-4 text-xs sm:text-sm text-green-400 leading-relaxed font-retro whitespace-pre-wrap break-words shadow-inner min-h-[120px]" id="detail-info">
                             <!-- Populated via JS -->
                         </div>
                     </div>
@@ -187,26 +211,19 @@
             <!-- Map Container -->
             <div id="map" class="absolute inset-0 bg-[#1a1a1a]"></div>
 
-            <!-- Map UI Overlay (Bottom center of the map) -->
-            <div class="absolute bottom-4 lg:bottom-6 left-1/2 transform -translate-x-1/2 w-[90%] max-w-xs lg:max-w-md bg-[#1e293b]/95 backdrop-blur-md rounded-lg shadow-2xl border-2 border-neon-cyan p-4 lg:p-5 z-[1000] retro-shadow-cyan transition-all">
-                
-                <div class="space-y-3 lg:space-y-4">
-                    <div class="flex justify-between items-center lg:items-end border-b border-slate-700 pb-2">
-                        <label class="text-[10px] lg:text-[11px] font-retro text-slate-400 uppercase tracking-widest">Solar Path</label>
-                        <span id="date-display" class="text-neon-yellow font-retro font-bold text-xs lg:text-sm">
-                            Loading...
-                        </span>
-                    </div>
+            <!-- COMPACT Map UI Overlay -->
+            <div class="absolute bottom-2 lg:bottom-4 left-1/2 transform -translate-x-1/2 w-[95%] max-w-sm lg:max-w-md bg-[#1e293b]/90 backdrop-blur-md rounded border border-neon-cyan p-2 z-[1000] retro-shadow-cyan transition-all">
+                <div class="flex items-center gap-3">
+                    <!-- Date Output -->
+                    <span id="date-display" class="text-neon-yellow font-retro font-bold text-[10px] lg:text-xs whitespace-nowrap w-12 lg:w-14 text-right">
+                        APR 14
+                    </span>
                     
                     <!-- Day of Year Slider -->
-                    <div class="pt-2">
-                        <input type="range" id="day-slider" min="1" max="365" value="104" class="w-full h-2">
-                    </div>
+                    <input type="range" id="day-slider" min="1" max="365" value="104" class="flex-grow">
                     
-                    <div class="flex justify-between text-[9px] lg:text-[10px] font-retro font-bold text-slate-500 uppercase tracking-widest">
-                        <span>Winter</span>
-                        <span>Summer</span>
-                    </div>
+                    <!-- Sun Icon -->
+                    <svg class="w-4 h-4 lg:w-5 lg:h-5 text-neon-cyan shrink-0 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
                 </div>
             </div>
         </div>
@@ -220,39 +237,82 @@
             lat: 39.7503,
             lng: -105.2478,
             routes: [
-                { name: "Cut Loose", grade: "5.11a", stars: 3, type: "Sport", height: "75 ft", pitches: 1, info: "A1. Cut Loose, 11-, 1p, 75', bolts." },
-                { name: "Bear's Choice", grade: "5.10b", stars: 3, type: "Sport", height: "75 ft", pitches: 1, info: "A2. Bear's Choice, 10, 1p, 75', bolts." },
-                { name: "Bear's Choice Easy Var", grade: "5.8+", stars: 2, type: "Sport", height: "75 ft", pitches: 1, info: "A2B. Bear's Choice Easy Variation, 8+, 1p, 75', bolts." },
-                { name: "Box of Rain", grade: "5.8", stars: 3.5, type: "Sport", height: "75 ft", pitches: 1, info: "B. Box of Rain, 8, 1p, 75', bolts." },
-                { name: "Ripple", grade: "5.8", stars: 4, type: "Sport", height: "75 ft", pitches: 1, info: "C. Ripple, 8, 1p, 75', bolts." },
-                { name: "Venice Beach", grade: "5.8", stars: 3.5, type: "Sport", height: "75 ft", pitches: 1, info: "D. Venice Beach, 8, 1p, 75', bolts." },
-                { name: "Holiday Road", grade: "5.8", stars: 3.5, type: "Sport", height: "70 ft", pitches: 1, info: "E. Holiday Road, 8, 1p, 70', bolts." },
-                { name: "Dirt Trek", grade: "5.9", stars: 2, type: "Trad", height: "132 ft", pitches: 1, info: "F. Dirt Trek, 9, 1p, 132', bolts & gear." },
-                { name: "Ridin' the Moon Buggy", grade: "5.9 R", stars: 2, type: "Trad", height: "70 ft", pitches: 1, info: "G. Ridin' the Moon Buggy, 9 R, 1p, 70', gear." },
-                { name: "Berga", grade: "5.9", stars: 3, type: "Sport", height: "80 ft", pitches: 1, info: "H. Berga, 9, 1p, 80', bolts." },
-                { name: "Beasto", grade: "5.10-", stars: 3.5, type: "Sport", height: "70 ft", pitches: 1, info: "I. Beasto, 10, 1p, 70', bolts." },
-                { name: "Turkey Jerky", grade: "5.10c", stars: 3.5, type: "Sport", height: "80 ft", pitches: 1, info: "K. Turkey Jerky, 10, 1p, 80', bolts." },
-                { name: "Snake Eyes", grade: "5.11b/c", stars: 3, type: "Sport", height: "Unknown", pitches: "var", info: "LM. Snake Eyes, 11, var, bolts." },
-                { name: "Walking With A Ghost", grade: "5.11b/c", stars: 4, type: "Sport", height: "55 ft", pitches: 1, info: "M. Walking With A Ghost, 11, 1p, 55', bolts. 2 starts." },
-                { name: "Ivy League", grade: "5.10a", stars: 3.5, type: "Sport", height: "50 ft", pitches: 1, info: "N. Ivy League, 10-, 1p, 50', bolts." },
-                { name: "Panama Red", grade: "5.10-", stars: 4, type: "Sport", height: "50 ft", pitches: 1, info: "O. Panama Red, 10-, 1p, 50', bolts." },
-                { name: "Route Canal", grade: "5.8+", stars: 3.5, type: "Trad", height: "50 ft", pitches: 1, info: "P. Route Canal, 9, 1p, 50', gear & bolt." },
-                { name: "Gondolier Arete", grade: "5.10a", stars: 4, type: "Sport", height: "55 ft", pitches: 1, info: "Q. Gondolier Arete, 10-, 1p, 55', bolts." },
-                { name: "The Wheel", grade: "5.5", stars: 2, type: "Trad", height: "60 ft", pitches: 1, info: "R. The Wheel, 5, 1p, 60', gear." },
-                { name: "Have Fun, Do Good Things", grade: "5.10a", stars: 2.5, type: "Trad", height: "70 ft", pitches: 1, info: "S. Have Fun, Do Good Things, 10-, 1p, 70', gear." },
-                { name: "Made In The Shade", grade: "5.9-", stars: 4, type: "Sport", height: "125 ft", pitches: 1, info: "T. Made In The Shade, 9-, 1p, 125', bolts." },
-                { name: "Aretnophobia", grade: "5.11a", stars: 3.5, type: "Sport", height: "70 ft", pitches: 1, info: "U. Aretnophobia, 11, 1p, 70', bolts." },
-                { name: "Batso Canal", grade: "5.10c", stars: 3.5, type: "Sport", height: "55 ft", pitches: 1, info: "V. Batso Canal, 10, 1p, 55', bolts." },
-                { name: "Lambada", grade: "5.10a/b", stars: 3.5, type: "Sport", height: "60 ft", pitches: 1, info: "W. Lambada, 10, 1p, 60', bolts." },
-                { name: "Levada", grade: "5.8+", stars: 3, type: "Sport", height: "80 ft", pitches: 1, info: "X. Levada, 8+, 1p, 80', bolts." },
-                { name: "2021 Evergreen Obstruction", grade: "5.7", stars: 2, type: "Trad", height: "60 ft", pitches: 1, info: "YZ. The 2021 Evergreen Obstruction, 7, 1p, 60', gear." },
-                { name: "The Whopper", grade: "5.9", stars: 3, type: "Sport", height: "Unknown", pitches: 1, info: "A. The Whopper, 9-, 1p, bolts." },
-                { name: "Buckets of Rain", grade: "5.9", stars: 3, type: "Sport", height: "45 ft", pitches: 1, info: "AA. Buckets of Rain, 8 or 10-, 1p, 45', bolts." },
-                { name: "Lame Line", grade: "5.8", stars: 2, type: "Trad/TR", height: "60 ft", pitches: 1, info: "BB. Lame Line, 8, 1p, 60', gear." }
+                { name: "Cut Loose", grade: "5.11a", stars: 3, type: "Sport", height: "75 ft", pitches: 1 },
+                { name: "Bear's Choice", grade: "5.10b", stars: 3, type: "Sport", height: "75 ft", pitches: 1 },
+                { name: "Bear's Choice Easy Var", grade: "5.8+", stars: 2, type: "Sport", height: "75 ft", pitches: 1 },
+                { name: "Box of Rain", grade: "5.8", stars: 3.5, type: "Sport", height: "75 ft", pitches: 1 },
+                { name: "Ripple", grade: "5.8", stars: 4, type: "Sport", height: "75 ft", pitches: 1 },
+                { name: "Venice Beach", grade: "5.8", stars: 3.5, type: "Sport", height: "75 ft", pitches: 1 },
+                { name: "Holiday Road", grade: "5.8", stars: 3.5, type: "Sport", height: "70 ft", pitches: 1 },
+                { name: "Dirt Trek", grade: "5.9", stars: 2, type: "Trad", height: "132 ft", pitches: 1 },
+                { name: "Ridin' the Moon Buggy", grade: "5.9 R", stars: 2, type: "Trad", height: "70 ft", pitches: 1 },
+                { name: "Berga", grade: "5.9", stars: 3, type: "Sport", height: "80 ft", pitches: 1 },
+                { name: "Beasto", grade: "5.10-", stars: 3.5, type: "Sport", height: "70 ft", pitches: 1 },
+                { name: "Turkey Jerky", grade: "5.10c", stars: 3.5, type: "Sport", height: "80 ft", pitches: 1 },
+                { name: "Snake Eyes", grade: "5.11b/c", stars: 3, type: "Sport", height: "Unknown", pitches: "var" },
+                { name: "Walking With A Ghost", grade: "5.11b/c", stars: 4, type: "Sport", height: "55 ft", pitches: 1 },
+                { name: "Ivy League", grade: "5.10a", stars: 3.5, type: "Sport", height: "50 ft", pitches: 1 },
+                { name: "Panama Red", grade: "5.10-", stars: 4, type: "Sport", height: "50 ft", pitches: 1 },
+                { name: "Route Canal", grade: "5.8+", stars: 3.5, type: "Trad", height: "50 ft", pitches: 1 },
+                { name: "Gondolier Arete", grade: "5.10a", stars: 4, type: "Sport", height: "55 ft", pitches: 1 },
+                { name: "The Wheel", grade: "5.5", stars: 2, type: "Trad", height: "60 ft", pitches: 1 },
+                { name: "Have Fun, Do Good Things", grade: "5.10a", stars: 2.5, type: "Trad", height: "70 ft", pitches: 1 },
+                { name: "Made In The Shade", grade: "5.9-", stars: 4, type: "Sport", height: "125 ft", pitches: 1 },
+                { name: "Aretnophobia", grade: "5.11a", stars: 3.5, type: "Sport", height: "70 ft", pitches: 1 },
+                { name: "Batso Canal", grade: "5.10c", stars: 3.5, type: "Sport", height: "55 ft", pitches: 1 },
+                { name: "Lambada", grade: "5.10a/b", stars: 3.5, type: "Sport", height: "60 ft", pitches: 1 },
+                { name: "Levada", grade: "5.8+", stars: 3, type: "Sport", height: "80 ft", pitches: 1 },
+                { name: "2021 Evergreen Obstruction", grade: "5.7", stars: 2, type: "Trad", height: "60 ft", pitches: 1 },
+                { name: "The Whopper", grade: "5.9", stars: 3, type: "Sport", height: "Unknown", pitches: 1 },
+                { name: "Buckets of Rain", grade: "5.9", stars: 3, type: "Sport", height: "45 ft", pitches: 1 },
+                { name: "Lame Line", grade: "5.8", stars: 2, type: "Trad/TR", height: "60 ft", pitches: 1 }
             ]
         };
 
-        // --- 2. POPULATE UI ---
+        // Attach original index to preserve details lookup mapping
+        canalZoneData.routes.forEach((route, index) => {
+            route.originalIndex = index;
+        });
+
+        // --- 2. SORTING & LIST LOGIC ---
+        
+        // Parses YDS grades (e.g. 5.10a/b, 5.8+) into numeric scores for flawless sorting
+        function getGradeScore(gradeStr) {
+            let score = 0;
+            const baseMatch = gradeStr.match(/5\.(\d+)/);
+            
+            if (baseMatch) {
+                // 5.8 = 80, 5.10 = 100
+                score = parseInt(baseMatch[1]) * 10; 
+            }
+            
+            // Adjust for modifiers
+            if (gradeStr.includes('-')) score -= 2;
+            if (gradeStr.includes('+')) score += 2;
+            
+            if (gradeStr.includes('a/b')) score += 1.5;
+            else if (gradeStr.includes('b/c')) score += 3.5;
+            else if (gradeStr.includes('c/d')) score += 5.5;
+            else if (gradeStr.includes('a')) score += 1;
+            else if (gradeStr.includes('b')) score += 3;
+            else if (gradeStr.includes('c')) score += 5;
+            else if (gradeStr.includes('d')) score += 7;
+            
+            return score;
+        }
+
+        function sortRoutes(method) {
+            let sortedRoutes = [...canalZoneData.routes];
+            
+            if (method === 'diff') {
+                sortedRoutes.sort((a, b) => getGradeScore(a.grade) - getGradeScore(b.grade));
+            } 
+            // If method === 'ltr', it retains the original left-to-right order cloned above
+            
+            renderRoutes(sortedRoutes);
+        }
+
+        // --- 3. POPULATE UI ---
         function generateStarHTML(stars) {
             let html = '';
             const fullStars = Math.floor(stars);
@@ -267,17 +327,18 @@
             return html;
         }
 
-        function renderRoutes(routes) {
+        function renderRoutes(routesToRender) {
             const container = document.getElementById('routes-container');
             container.innerHTML = '';
             
-            routes.forEach((route, index) => {
+            routesToRender.forEach((route) => {
                 const typeStyle = route.type.includes('Trad') 
                     ? 'border-neon-pink text-neon-pink' 
                     : 'border-neon-cyan text-neon-cyan';
 
+                // Notice we pass route.originalIndex to correctly pull the route from the master array
                 const item = `
-                    <div onclick="openRouteDetail(${index})" class="retro-card bg-[#1e293b] flex justify-between items-center p-3 sm:p-4 rounded-lg cursor-pointer group">
+                    <div onclick="openRouteDetail(${route.originalIndex})" class="retro-card bg-[#1e293b] flex justify-between items-center p-3 sm:p-4 rounded-lg cursor-pointer group">
                         <div class="flex-grow">
                             <h4 class="font-bold text-slate-100 group-hover:text-white transition-colors text-lg">${route.name}</h4>
                             <div class="flex items-center gap-3 mt-2">
@@ -292,9 +353,14 @@
                 container.insertAdjacentHTML('beforeend', item);
             });
         }
+        
+        // Initial render (Left to Right)
         renderRoutes(canalZoneData.routes);
 
         // --- ROUTE DETAIL SLIDE PANEL ---
+        // Terminal text animation reference to prevent overlaps if clicked quickly
+        let typeWriterTimeout; 
+
         function openRouteDetail(index) {
             const route = canalZoneData.routes[index];
             
@@ -302,29 +368,46 @@
             document.getElementById('detail-grade').innerText = route.grade;
             document.getElementById('detail-stars').innerHTML = generateStarHTML(route.stars);
             
-            // Terminal Typing Effect for Beta
+            // LOGISTICS PARSING & CALCULATIONS
+            const isTrad = route.type.includes('Trad');
+            const protection = isTrad ? "Gear / Mixed" : "Bolts";
+            
+            const heightMatch = route.height.match(/\d+/);
+            const heightFt = heightMatch ? parseInt(heightMatch[0]) : 0;
+            
+            let ropeSize = "Unknown";
+            if (heightFt > 0) {
+                ropeSize = heightFt >= 95 ? "70m MINIMUM" : "60m MINIMUM";
+            }
+
+            const terminalText = `> LOGISTICS CHECK...\n> HEIGHT: ${route.height}\n> PITCHES: ${route.pitches}\n> GEAR: ${protection}\n> ROPE: ${ropeSize}\n> STATUS: READY TO SEND`;
+            
+            // Terminal Typing Effect
             const infoBox = document.getElementById('detail-info');
             infoBox.innerText = '';
-            let i = 0;
+            clearTimeout(typeWriterTimeout); // Stop previous typing if user clicks another route rapidly
+            
+            let charIndex = 0;
             const typeWriter = () => {
-                if (i < route.info.length) {
-                    infoBox.innerHTML += route.info.charAt(i);
-                    i++;
-                    setTimeout(typeWriter, 15);
+                if (charIndex < terminalText.length) {
+                    infoBox.innerHTML += terminalText.charAt(charIndex);
+                    charIndex++;
+                    typeWriterTimeout = setTimeout(typeWriter, 15);
                 } else {
                     infoBox.innerHTML += '<span class="animate-pulse">_</span>';
                 }
             };
             typeWriter();
             
-            const typeStyle = route.type.includes('Trad') ? 'border-neon-pink text-neon-pink shadow-[2px_2px_0px_#ec4899]' : 'border-neon-cyan text-neon-cyan shadow-[2px_2px_0px_#22d3ee]';
-            
+            // Update Badges
+            const typeStyle = isTrad ? 'border-neon-pink text-neon-pink shadow-[2px_2px_0px_#ec4899]' : 'border-neon-cyan text-neon-cyan shadow-[2px_2px_0px_#22d3ee]';
             document.getElementById('detail-badges').innerHTML = `
                 <span class="px-3 py-1 bg-slate-900 text-xs font-retro font-bold border ${typeStyle}">${route.type}</span>
                 <span class="px-3 py-1 bg-slate-900 text-xs font-retro font-bold border border-slate-600 text-slate-300 shadow-[2px_2px_0px_#475569]">${route.height}</span>
                 <span class="px-3 py-1 bg-slate-900 text-xs font-retro font-bold border border-slate-600 text-slate-300 shadow-[2px_2px_0px_#475569]">${route.pitches} PTCH</span>
             `;
 
+            // Slide Panel Animation
             document.getElementById('route-detail-view').classList.remove('translate-x-full');
             document.getElementById('main-list-view').classList.add('-translate-x-10', 'opacity-20');
         }
@@ -334,7 +417,7 @@
             document.getElementById('main-list-view').classList.remove('-translate-x-10', 'opacity-20');
         }
 
-        // --- 3. INITIALIZE MAP ---
+        // --- 4. INITIALIZE MAP ---
         const map = L.map('map', {
             zoomControl: false 
         }).setView([canalZoneData.lat, canalZoneData.lng], 16);
@@ -346,7 +429,7 @@
             maxZoom: 19
         }).addTo(map);
 
-        // --- 4. MAP VARIABLES ---
+        // --- 5. MAP VARIABLES ---
         let cragLocation = L.latLng(canalZoneData.lat, canalZoneData.lng);
         let cragMarker = null;
         let sunRaysLayer = L.layerGroup().addTo(map);
@@ -359,7 +442,7 @@
         const currentDayOfYear = Math.floor((today - start) / (1000 * 60 * 60 * 24));
         slider.value = currentDayOfYear;
 
-        // --- 5. MAP EVENT LISTENERS ---
+        // --- 6. MAP EVENT LISTENERS ---
         map.on('click', function(e) {
             cragLocation = e.latlng;
             document.getElementById('crag-coords').innerText = `${e.latlng.lat.toFixed(4)}, ${e.latlng.lng.toFixed(4)}`;
@@ -380,7 +463,7 @@
         }).observe(document.getElementById('map'));
 
 
-        // --- 6. SUN RAY LOGIC ---
+        // --- 7. SUN RAY LOGIC ---
         function updateMapFeatures() {
             sunRaysLayer.clearLayers();
 
