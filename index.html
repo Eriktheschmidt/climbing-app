@@ -106,13 +106,8 @@
             appearance: none;
             background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2322d3ee' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
             background-repeat: no-repeat;
-            background-position: right 0.25rem center;
+            background-position: right 0.5rem center;
             background-size: 1em;
-        }
-
-        /* Classic Topo Line Shadow */
-        .mp-line-shadow {
-            filter: drop-shadow(0px 2px 3px rgba(0,0,0,0.8));
         }
     </style>
 </head>
@@ -123,6 +118,15 @@
         <div class="flex items-center gap-2 sm:gap-3">
             <svg class="w-7 h-7 sm:w-8 sm:h-8 text-neon-cyan" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
             <h1 class="text-xl sm:text-2xl font-black tracking-widest text-white uppercase italic">Send<span class="text-neon-pink">Tracker</span></h1>
+        </div>
+        
+        <!-- Global Crag Selector -->
+        <div class="flex items-center gap-2">
+            <label for="crag-selector" class="text-[10px] font-retro text-slate-400 uppercase tracking-widest hidden sm:block">Location:</label>
+            <select id="crag-selector" onchange="switchCrag(this.value)" class="bg-[#0f172a] text-neon-cyan text-xs font-retro uppercase tracking-widest border-2 border-slate-700 rounded-sm pl-3 pr-8 py-1.5 outline-none focus:border-neon-cyan focus:ring-1 focus:ring-neon-cyan cursor-pointer transition-colors shadow-sm w-40 sm:w-56 truncate">
+                <option value="canal-zone">Canal Zone</option>
+                <option value="wall-of-the-90s">Wall of the '90s</option>
+            </select>
         </div>
     </header>
 
@@ -139,12 +143,12 @@
                     <div class="flex items-center gap-2 text-[10px] sm:text-[11px] font-retro text-neon-cyan uppercase tracking-widest mb-1">
                         <span>CO</span> <span class="text-slate-500">&rsaquo;</span> <span>Clear Creek</span>
                     </div>
-                    <h2 class="text-3xl sm:text-4xl font-black text-white mb-2 tracking-tight">Canal Zone</h2>
+                    <h2 id="ui-crag-name" class="text-3xl sm:text-4xl font-black text-white mb-2 tracking-tight">Canal Zone</h2>
                     <div class="flex flex-wrap items-center gap-3 sm:gap-4 text-xs font-retro text-slate-400 mb-3">
-                        <span class="flex items-center gap-1.5"><svg class="w-4 h-4 text-neon-pink" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path></svg> <span id="crag-coords">39.7503, -105.2478</span></span>
-                        <span class="flex items-center gap-1.5 text-neon-yellow border border-neon-yellow/30 bg-neon-yellow/10 px-2 py-0.5 rounded-sm"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg> SOUTH FACING</span>
+                        <span class="flex items-center gap-1.5"><svg class="w-4 h-4 text-neon-pink" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path></svg> <span id="ui-crag-coords">39.7503, -105.2478</span></span>
+                        <span class="flex items-center gap-1.5 text-neon-yellow border border-neon-yellow/30 bg-neon-yellow/10 px-2 py-0.5 rounded-sm"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg> <span id="ui-crag-aspect">SOUTH FACING</span></span>
                     </div>
-                    <p class="text-slate-400 text-xs sm:text-sm leading-relaxed line-clamp-2">
+                    <p id="ui-crag-desc" class="text-slate-400 text-xs sm:text-sm leading-relaxed line-clamp-2">
                         The first crag on the left heading up Clear Creek... With excellent CCC rock, the crag holds shade through the mornings until around 2:00 in the summer.
                     </p>
                 </div>
@@ -176,7 +180,7 @@
                 <div class="sticky top-0 bg-[#1e293b]/95 backdrop-blur-md border-b-2 border-neon-cyan p-4 shrink-0 z-10">
                     <button onclick="closeRouteDetail()" class="flex items-center gap-1.5 text-sm font-retro font-bold text-slate-400 hover:text-neon-pink transition-colors mb-4 py-1 group">
                         <svg class="w-5 h-5 transform group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
-                        SYS.BACK()
+                        BACK
                     </button>
                     <div class="flex justify-between items-start gap-3">
                         <h2 id="detail-name" class="text-2xl sm:text-3xl font-black text-white leading-tight">Route Name</h2>
@@ -203,7 +207,6 @@
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
                             Beta Terminal
                         </h4>
-                        <!-- whitespace-pre-wrap allows \n characters to render as real line breaks in the text content -->
                         <div class="bg-black border-l-4 border-neon-pink rounded-r-lg p-4 text-xs sm:text-sm text-green-400 leading-relaxed font-retro whitespace-pre-wrap break-words shadow-inner min-h-[120px]" id="detail-info">
                             <!-- Populated via JS -->
                         </div>
@@ -237,50 +240,124 @@
     </main>
 
     <script>
-        // --- 1. CRAG DATA ---
-        const canalZoneData = {
-            name: "Canal Zone",
-            lat: 39.7503,
-            lng: -105.2478,
-            routes: [
-                { name: "Cut Loose", grade: "5.11a", stars: 3, type: "Sport", height: "75 ft", pitches: 1, loc: "A1", locationBeta: "Far left end of the Canal Zone. It's the very first bolted line you encounter. Look for the newer Climb Tech mussy hooks at the anchors." },
-                { name: "Bear's Choice", grade: "5.10b", stars: 3, type: "Sport", height: "75 ft", pitches: 1, loc: "A2", locationBeta: "Far left side. The second bolted line from the left edge of the wall. Shares a start with the 5.8 Easy Variation." },
-                { name: "Bear's Choice Easy Var", grade: "5.8+", stars: 2, type: "Sport", height: "75 ft", pitches: 1, loc: "A2B", locationBeta: "Shares the first few bolts with Bear's Choice on the far left side, but veers right to easier, blockier terrain." },
-                { name: "Box of Rain", grade: "5.8", stars: 3.5, type: "Sport", height: "75 ft", pitches: 1, loc: "B", locationBeta: "Left-center. The first of the highly popular 5.8 warm-ups. Look for the blocky start just to the left of Ripple." },
-                { name: "Ripple", grade: "5.8", stars: 4, type: "Sport", height: "75 ft", pitches: 1, loc: "C", locationBeta: "Left-center. A highly popular moderate right between Box of Rain and the large Venice Beach ledge. Often has a line waiting for it." },
-                { name: "Venice Beach", grade: "5.8", stars: 3.5, type: "Sport", height: "75 ft", pitches: 1, loc: "D", locationBeta: "Left-center. You'll need to scramble up onto the prominent, elevated rock shelf to reach the start and first bolt." },
-                { name: "Holiday Road", grade: "5.8", stars: 3.5, type: "Sport", height: "70 ft", pitches: 1, loc: "E", locationBeta: "Left-center. Also starts off the prominent elevated ledge/shelf, sitting just to the right of Venice Beach." },
-                { name: "Dirt Trek", grade: "5.9", stars: 2, type: "Trad", height: "132 ft", pitches: 1, loc: "F", locationBeta: "Center-left. You can't miss it: one of the longest lines on the wall (132 feet) following a massive crack/dihedral system. Requires a 70m rope or double-rope rappel!" },
-                { name: "Ridin' the Moon Buggy", grade: "5.9 R", stars: 2, type: "Trad", height: "70 ft", pitches: 1, loc: "G", locationBeta: "Center-left. A notoriously runout (R-rated) gear line located directly between the huge Dirt Trek dihedral and Berga." },
-                { name: "Berga", grade: "5.9", stars: 3, type: "Sport", height: "80 ft", pitches: 1, loc: "H", locationBeta: "Center of the wall. Sits just to the left of the obvious, clean face of Beasto." },
-                { name: "Beasto", grade: "5.10-", stars: 3.5, type: "Sport", height: "70 ft", pitches: 1, loc: "I", locationBeta: "Dead center of the main wall. A very popular and obvious line that climbs straight up the clean, slightly slabby face." },
-                { name: "Turkey Jerky", grade: "5.10c", stars: 3.5, type: "Sport", height: "80 ft", pitches: 1, loc: "K", locationBeta: "Center-right. Sandwiched between Beasto and the steeper Snake Eyes area. Look for the tricky crux section." },
-                { name: "Snake Eyes", grade: "5.11b/c", stars: 3, type: "Sport", height: "Unknown", pitches: "var", loc: "LM", locationBeta: "Center-right section. The wall gets steeper here. Shares a start with Walking with a Ghost before splitting." },
-                { name: "Walking With A Ghost", grade: "5.11b/c", stars: 4, type: "Sport", height: "55 ft", pitches: 1, loc: "M", locationBeta: "Center-right. Has two possible starts. Shares the steep opening section with Snake Eyes or starts immediately right of it." },
-                { name: "Ivy League", grade: "5.10a", stars: 3.5, type: "Sport", height: "50 ft", pitches: 1, loc: "N", locationBeta: "Center-right. A slightly shorter 50-foot line sitting just to the left of the classic Panama Red." },
-                { name: "Panama Red", grade: "5.10-", stars: 4, type: "Sport", height: "50 ft", pitches: 1, loc: "O", locationBeta: "Center-right. A highly rated classic on clean rock. Located just right of Ivy League and left of the Route Canal mixed line." },
-                { name: "Route Canal", grade: "5.8+", stars: 3.5, type: "Trad", height: "50 ft", pitches: 1, loc: "P", locationBeta: "Right side. A shorter mixed/gear route located between Panama Red and the prominent Gondolier Arête." },
-                { name: "Gondolier Arete", grade: "5.10a", stars: 4, type: "Sport", height: "55 ft", pitches: 1, loc: "Q", locationBeta: "Right side. Very obvious line that climbs the prominent, clean arête feature protruding from the wall." },
-                { name: "The Wheel", grade: "5.5", stars: 2, type: "Trad", height: "60 ft", pitches: 1, loc: "R", locationBeta: "Right side. An easy, blocky gear line just right of the Gondolier Arête." },
-                { name: "Have Fun, Do Good Things", grade: "5.10a", stars: 2.5, type: "Trad", height: "70 ft", pitches: 1, loc: "S", locationBeta: "Right side. A 70-foot gear line located to the right of The Wheel." },
-                { name: "Made In The Shade", grade: "5.9-", stars: 4, type: "Sport", height: "125 ft", pitches: 1, loc: "T", locationBeta: "Far right-center. The obvious, towering 125' line that goes all the way to the top of the formation. Requires a 70m rope to lower, or use the mid-station anchors." },
-                { name: "Aretnophobia", grade: "5.11a", stars: 3.5, type: "Sport", height: "70 ft", pitches: 1, loc: "U", locationBeta: "Far right section. Located just to the right of the massive Made In The Shade line." },
-                { name: "Batso Canal", grade: "5.10c", stars: 3.5, type: "Sport", height: "55 ft", pitches: 1, loc: "V", locationBeta: "Far right section. A 55-foot bolted line sitting just to the left of Lambada." },
-                { name: "Lambada", grade: "5.10a/b", stars: 3.5, type: "Sport", height: "60 ft", pitches: 1, loc: "W", locationBeta: "Far right section. Starts just right of Batso Canal and left of the moderate Levada." },
-                { name: "Levada", grade: "5.8+", stars: 3, type: "Sport", height: "80 ft", pitches: 1, loc: "X", locationBeta: "Far right side. A good moderate 5.8+ sitting to the right of Lambada." },
-                { name: "2021 Evergreen Obstruction", grade: "5.7", stars: 2, type: "Trad", height: "60 ft", pitches: 1, loc: "YZ", locationBeta: "Far right edge. A gear line known for a tree/obstruction near the top of the route." },
-                { name: "The Whopper", grade: "5.9", stars: 3, type: "Sport", height: "Unknown", pitches: 1, loc: "A", locationBeta: "Extreme right side. Located past the main continuous face, somewhat detached from the main cluster." },
-                { name: "Buckets of Rain", grade: "5.9", stars: 3, type: "Sport", height: "45 ft", pitches: 1, loc: "AA", locationBeta: "Extreme right side. A short 45-foot line near the end of the crag and the descent trail." },
-                { name: "Lame Line", grade: "5.8", stars: 2, type: "Trad/TR", height: "60 ft", pitches: 1, loc: "BB", locationBeta: "The absolute furthest route on the right. If you take the stone stairs approach trail, this route is directly where the trail meets the cliff base." }
-            ]
+        // --- 1. CRAG DATABASE ---
+        const cragsDatabase = {
+            "canal-zone": {
+                name: "Canal Zone",
+                lat: 39.7503,
+                lng: -105.2478,
+                aspect: "SOUTH FACING",
+                description: "The first crag on the left heading up Clear Creek. With excellent CCC rock, the crag holds shade through the mornings until around 2:00 in the summer.",
+                routes: [
+                    { name: "Cut Loose", grade: "5.11a", stars: 3, type: "Sport", height: "75 ft", pitches: 1, loc: "A1", bolts: "8", locationBeta: "Far left end of the Canal Zone. It's the very first bolted line you encounter. Look for the newer Climb Tech mussy hooks at the anchors." },
+                    { name: "Bear's Choice", grade: "5.10b", stars: 3, type: "Sport", height: "75 ft", pitches: 1, loc: "A2", bolts: "8", locationBeta: "Far left side. The second bolted line from the left edge of the wall. Shares a start with the 5.8 Easy Variation." },
+                    { name: "Bear's Choice Easy Var", grade: "5.8+", stars: 2, type: "Sport", height: "75 ft", pitches: 1, loc: "A2B", bolts: "8", locationBeta: "Shares the first few bolts with Bear's Choice on the far left side, but veers right to easier, blockier terrain." },
+                    { name: "Box of Rain", grade: "5.8", stars: 3.5, type: "Sport", height: "75 ft", pitches: 1, loc: "B", bolts: "8", locationBeta: "Left-center. The first of the highly popular 5.8 warm-ups. Look for the blocky start just to the left of Ripple." },
+                    { name: "Ripple", grade: "5.8", stars: 4, type: "Sport", height: "75 ft", pitches: 1, loc: "C", bolts: "8", locationBeta: "Left-center. A highly popular moderate right between Box of Rain and the large Venice Beach ledge. Often has a line waiting for it." },
+                    { name: "Venice Beach", grade: "5.8", stars: 3.5, type: "Sport", height: "75 ft", pitches: 1, loc: "D", bolts: "8", locationBeta: "Left-center. You'll need to scramble up onto the prominent, elevated rock shelf to reach the start and first bolt." },
+                    { name: "Holiday Road", grade: "5.8", stars: 3.5, type: "Sport", height: "70 ft", pitches: 1, loc: "E", bolts: "7", locationBeta: "Left-center. Also starts off the prominent elevated ledge/shelf, sitting just to the right of Venice Beach." },
+                    { name: "Dirt Trek", grade: "5.9", stars: 2, type: "Trad", height: "132 ft", pitches: 1, loc: "F", bolts: "12 + Gear", locationBeta: "Center-left. You can't miss it: one of the longest lines on the wall (132 feet) following a massive crack/dihedral system. Requires a 70m rope or double-rope rappel!" },
+                    { name: "Ridin' the Moon Buggy", grade: "5.9 R", stars: 2, type: "Trad", height: "70 ft", pitches: 1, loc: "G", bolts: "Gear (R-Rated)", locationBeta: "Center-left. A notoriously runout (R-rated) gear line located directly between the huge Dirt Trek dihedral and Berga." },
+                    { name: "Berga", grade: "5.9", stars: 3, type: "Sport", height: "80 ft", pitches: 1, loc: "H", bolts: "9", locationBeta: "Center of the wall. Sits just to the left of the obvious, clean face of Beasto." },
+                    { name: "Beasto", grade: "5.10-", stars: 3.5, type: "Sport", height: "70 ft", pitches: 1, loc: "I", bolts: "8", locationBeta: "Dead center of the main wall. A very popular and obvious line that climbs straight up the clean, slightly slabby face." },
+                    { name: "Turkey Jerky", grade: "5.10c", stars: 3.5, type: "Sport", height: "80 ft", pitches: 1, loc: "K", bolts: "8", locationBeta: "Center-right. Sandwiched between Beasto and the steeper Snake Eyes area. Look for the tricky crux section." },
+                    { name: "Snake Eyes", grade: "5.11b/c", stars: 3, type: "Sport", height: "Unknown", pitches: "var", loc: "LM", bolts: "6", locationBeta: "Center-right section. The wall gets steeper here. Shares a start with Walking with a Ghost before splitting." },
+                    { name: "Walking With A Ghost", grade: "5.11b/c", stars: 4, type: "Sport", height: "55 ft", pitches: 1, loc: "M", bolts: "6", locationBeta: "Center-right. Has two possible starts. Shares the steep opening section with Snake Eyes or starts immediately right of it." },
+                    { name: "Ivy League", grade: "5.10a", stars: 3.5, type: "Sport", height: "50 ft", pitches: 1, loc: "N", bolts: "5", locationBeta: "Center-right. A slightly shorter 50-foot line sitting just to the left of the classic Panama Red." },
+                    { name: "Panama Red", grade: "5.10-", stars: 4, type: "Sport", height: "50 ft", pitches: 1, loc: "O", bolts: "7", locationBeta: "Center-right. A highly rated classic on clean rock. Located just right of Ivy League and left of the Route Canal mixed line." },
+                    { name: "Route Canal", grade: "5.8+", stars: 3.5, type: "Trad", height: "50 ft", pitches: 1, loc: "P", bolts: "1 + Gear", locationBeta: "Right side. A shorter mixed/gear route located between Panama Red and the prominent Gondolier Arête." },
+                    { name: "Gondolier Arete", grade: "5.10a", stars: 4, type: "Sport", height: "55 ft", pitches: 1, loc: "Q", bolts: "6", locationBeta: "Right side. Very obvious line that climbs the prominent, clean arête feature protruding from the wall." },
+                    { name: "The Wheel", grade: "5.5", stars: 2, type: "Trad", height: "60 ft", pitches: 1, loc: "R", bolts: "Gear", locationBeta: "Right side. An easy, blocky gear line just right of the Gondolier Arête." },
+                    { name: "Have Fun, Do Good Things", grade: "5.10a", stars: 2.5, type: "Trad", height: "70 ft", pitches: 1, loc: "S", bolts: "Gear", locationBeta: "Right side. A 70-foot gear line located to the right of The Wheel." },
+                    { name: "Made In The Shade", grade: "5.9-", stars: 4, type: "Sport", height: "125 ft", pitches: 1, loc: "T", bolts: "17", locationBeta: "Far right-center. The obvious, towering 125' line that goes all the way to the top of the formation. Requires a 70m rope to lower, or use the mid-station anchors." },
+                    { name: "Aretnophobia", grade: "5.11a", stars: 3.5, type: "Sport", height: "70 ft", pitches: 1, loc: "U", bolts: "9", locationBeta: "Far right section. Located just to the right of the massive Made In The Shade line." },
+                    { name: "Batso Canal", grade: "5.10c", stars: 3.5, type: "Sport", height: "55 ft", pitches: 1, loc: "V", bolts: "7", locationBeta: "Far right section. A 55-foot bolted line sitting just to the left of Lambada." },
+                    { name: "Lambada", grade: "5.10a/b", stars: 3.5, type: "Sport", height: "60 ft", pitches: 1, loc: "W", bolts: "7", locationBeta: "Far right section. Starts just right of Batso Canal and left of the moderate Levada." },
+                    { name: "Levada", grade: "5.8+", stars: 3, type: "Sport", height: "80 ft", pitches: 1, loc: "X", bolts: "10", locationBeta: "Far right side. A good moderate 5.8+ sitting to the right of Lambada." },
+                    { name: "2021 Evergreen Obstruction", grade: "5.7", stars: 2, type: "Trad", height: "60 ft", pitches: 1, loc: "YZ", bolts: "Gear", locationBeta: "Far right edge. A gear line known for a tree/obstruction near the top of the route." },
+                    { name: "The Whopper", grade: "5.9", stars: 3, type: "Sport", height: "Unknown", pitches: 1, loc: "A", bolts: "5", locationBeta: "Extreme right side. Located past the main continuous face, somewhat detached from the main cluster." },
+                    { name: "Buckets of Rain", grade: "5.9", stars: 3, type: "Sport", height: "45 ft", pitches: 1, loc: "AA", bolts: "4", locationBeta: "Extreme right side. A short 45-foot line near the end of the crag and the descent trail." },
+                    { name: "Lame Line", grade: "5.8", stars: 2, type: "Trad/TR", height: "60 ft", pitches: 1, loc: "BB", bolts: "Top Rope / Gear", locationBeta: "The absolute furthest route on the right. If you take the stone stairs approach trail, this route is directly where the trail meets the cliff base." }
+                ]
+            },
+            "wall-of-the-90s": {
+                name: "Wall of the '90s",
+                lat: 39.7388,
+                lng: -105.3222,
+                aspect: "SOUTH FACING",
+                description: "This is a fantastic crag with a short, steep approach. A host of excellent climbs reside here, most being in the 5.11 - 5.12 range. The guidebook doesn't lie in saying that this is some of the best rock in the canyon.",
+                routes: [
+                    { name: "Alone Time with my Banana", grade: "5.6", stars: 2, type: "Sport", height: "90 ft", pitches: 1, loc: "A", bolts: "Bolts +/- Gear", locationBeta: "Far left side of the wall. A relatively short, easy climb to warm up on." },
+                    { name: "Leftover Stuff", grade: "5.10", stars: 2.5, type: "Sport", height: "110 ft", pitches: 1, loc: "B", bolts: "Bolts", locationBeta: "Left side. Located between the Banana route and Hot Stuff." },
+                    { name: "Hot Stuff", grade: "5.10", stars: 3, type: "Sport", height: "135 ft", pitches: 1, loc: "C", bolts: "Bolts", locationBeta: "Left side. Look for the clean vertical face just right of Leftover Stuff." },
+                    { name: "Pretty Woman", grade: "5.10a", stars: 3.5, type: "Sport", height: "95 ft", pitches: 1, loc: "D", bolts: "Bolts", locationBeta: "Left-center. A classic moderate on this wall before the grades start bumping up significantly." },
+                    { name: "Hey Good Lookin'", grade: "5.11d", stars: 3.5, type: "Sport", height: "140 ft", pitches: 1, loc: "E2", bolts: "Bolts", locationBeta: "Left-center. The line that goes out the leftmost big roof crack." },
+                    { name: "7-Minute Abs", grade: "5.13d", stars: 4, type: "Sport", height: "120 ft", pitches: 1, loc: "E1", bolts: "Bolts", locationBeta: "Left-center. One of the hardest lines. Follows the swath of molasses stone with lime lichen highlights ten feet left of Harlot." },
+                    { name: "Vixen", grade: "5.10c", stars: 3, type: "Sport", height: "80 ft", pitches: 1, loc: "G", bolts: "Bolts", locationBeta: "Center. A good entry point for the steeper climbing on the main wall." },
+                    { name: "Harlot", grade: "5.13d", stars: 4, type: "Sport", height: "110 ft", pitches: 1, loc: "above G", bolts: "Bolts", locationBeta: "Center. A very difficult, steep climb located right of 7-Minute Abs." },
+                    { name: "Hellcat", grade: "5.14a", stars: 4, type: "Sport", height: "115 ft", pitches: 1, loc: "above G", bolts: "Bolts", locationBeta: "Center. Pushing the limits of the crag, very steep and continuous." },
+                    { name: "Y2K", grade: "5.12c", stars: 3.5, type: "Sport", height: "120 ft", pitches: 1, loc: "H", bolts: "Bolts", locationBeta: "Center. A pumpy 5.12 located right of Hellcat." },
+                    { name: "Slinky", grade: "5.12d", stars: 3.5, type: "Sport", height: "100 ft", pitches: 1, loc: "I", bolts: "Bolts", locationBeta: "Center. Shares similar characteristics to Y2K just to its right." },
+                    { name: "Recovery", grade: "5.10c", stars: 4, type: "Sport", height: "100 ft", pitches: 1, loc: "K", bolts: "Bolts", locationBeta: "Center-right. Look for the prominent belay bolt at the base, which it shares with Foxy." },
+                    { name: "Foxy", grade: "5.10d", stars: 3.5, type: "Sport", height: "90 ft", pitches: 1, loc: "L", bolts: "Bolts", locationBeta: "Center-right. Shares the lower belay bolt with Recovery before splitting." },
+                    { name: "Little Kitten", grade: "5.10b/c", stars: 3.5, type: "Sport", height: "80 ft", pitches: 1, loc: "M", bolts: "Bolts", locationBeta: "Center-right. Located just right of Foxy." },
+                    { name: "Wet Dream", grade: "5.12a", stars: 4, type: "Sport", height: "105 ft", pitches: 1, loc: "O", bolts: "Bolts", locationBeta: "Right side. A fantastic, sustained line and one of the best 5.12s in the canyon." },
+                    { name: "Centerfold", grade: "5.10a", stars: 4, type: "Sport", height: "120 ft", pitches: 2, loc: "P", bolts: "Bolts", locationBeta: "Right side. Takes the dihedral corner of the huge right-facing dihedral in the middle of the wall." },
+                    { name: "Ten-Digit Dialing", grade: "5.12c", stars: 4, type: "Sport", height: "70 ft", pitches: 1, loc: "Q1", bolts: "Bolts", locationBeta: "Right side. You can access the top of this route from the first pitch of Centerfold." },
+                    { name: "Reefer Madness", grade: "5.11a", stars: 4, type: "Sport", height: "100 ft", pitches: 1, loc: "Q2", bolts: "Bolts", locationBeta: "Right side. Very popular. Look for the large eye bolt at the base of the route." },
+                    { name: "Porn Queen", grade: "5.11b/c", stars: 3.5, type: "Sport", height: "100 ft", pitches: 1, loc: "above Q2", bolts: "Bolts", locationBeta: "Far right side. Sits right of Reefer Madness." },
+                    { name: "Stone Free", grade: "5.11", stars: 3, type: "Sport/TR", height: "80 ft", pitches: 1, loc: "RQ2", bolts: "Bolts", locationBeta: "Far right side. A somewhat runout line often top-roped." },
+                    { name: "Creekside Prophet", grade: "5.13a", stars: 4, type: "Sport", height: "75 ft", pitches: 1, loc: "above R/Q2", bolts: "Bolts", locationBeta: "Far right side. Hard pulling on the steep right wing of the wall." },
+                    { name: "Double Stout", grade: "5.13b", stars: 4, type: "Sport", height: "115 ft", pitches: 1, loc: "T", bolts: "Bolts", locationBeta: "Far right side. Continue past Reefer Madness along the exposed ledges. This is the route left of Black and Tan." },
+                    { name: "Black and Tan", grade: "5.13b", stars: 4, type: "Sport", height: "100 ft", pitches: 1, loc: "U", bolts: "Bolts", locationBeta: "Far right side. Double Stout shares the first three clips over a small roof before branching." },
+                    { name: ".30-06", grade: "5.12a", stars: 4, type: "Trad", height: "90 ft", pitches: 1, loc: "V", bolts: "Gear", locationBeta: "Far right. A classic trad line on the wall." },
+                    { name: "Roadrunner", grade: "5.11-", stars: 3.5, type: "Trad", height: "80 ft", pitches: 2, loc: "X", bolts: "Gear", locationBeta: "Far right side. Look for the left-hand crack system; the roof goes at 12a but the handcrack is easier." },
+                    { name: "Mission Impossible", grade: "5.14c", stars: 4, type: "Sport", height: "90 ft", pitches: 1, loc: "Y", bolts: "Bolts", locationBeta: "Extreme right. The ultimate testpiece of the crag." }
+                ]
+            }
         };
 
-        // Attach original index to preserve details lookup mapping
-        canalZoneData.routes.forEach((route, index) => {
-            route.originalIndex = index;
-        });
+        // Store the active crag ID globally
+        let currentCragId = "canal-zone";
+        let activeRoutes = [];
 
-        // --- 2. SORTING & LIST LOGIC ---
+        // --- 2. INITIALIZATION & STATE SWITCHING ---
+
+        // Prepare index lookup for detail viewing
+        function prepCragData(cragKey) {
+            cragsDatabase[cragKey].routes.forEach((route, index) => {
+                route.originalIndex = index;
+            });
+        }
+        
+        // Prep both crags on load
+        prepCragData("canal-zone");
+        prepCragData("wall-of-the-90s");
+
+        function switchCrag(cragId) {
+            currentCragId = cragId;
+            const crag = cragsDatabase[cragId];
+            
+            // Update UI Headers
+            document.getElementById('ui-crag-name').innerText = crag.name;
+            document.getElementById('ui-crag-coords').innerText = `${crag.lat.toFixed(4)}, ${crag.lng.toFixed(4)}`;
+            document.getElementById('ui-crag-aspect').innerText = crag.aspect;
+            document.getElementById('ui-crag-desc').innerText = crag.description;
+            document.getElementById('route-count').innerText = crag.routes.length;
+            
+            // Reset sort dropdown to default Left to Right
+            document.getElementById('sort-select').value = 'ltr';
+
+            // Map Updates
+            cragLocation = L.latLng(crag.lat, crag.lng);
+            map.setView([crag.lat, crag.lng], 16);
+            
+            // Re-render routes and map features
+            sortRoutes('ltr');
+            updateMapFeatures();
+        }
+
+        // --- 3. SORTING & LIST LOGIC ---
         function getGradeScore(gradeStr) {
             let score = 0;
             const baseMatch = gradeStr.match(/5\.(\d+)/);
@@ -298,14 +375,15 @@
         }
 
         function sortRoutes(method) {
-            let sortedRoutes = [...canalZoneData.routes];
+            const currentRoutes = cragsDatabase[currentCragId].routes;
+            let sortedRoutes = [...currentRoutes];
             if (method === 'diff') {
                 sortedRoutes.sort((a, b) => getGradeScore(a.grade) - getGradeScore(b.grade));
             } 
             renderRoutes(sortedRoutes);
         }
 
-        // --- 3. POPULATE UI ---
+        // --- 4. POPULATE UI ---
         function generateStarHTML(stars) {
             let html = '';
             const fullStars = Math.floor(stars);
@@ -344,31 +422,26 @@
                 container.insertAdjacentHTML('beforeend', item);
             });
         }
-        
-        renderRoutes(canalZoneData.routes);
 
         // --- ROUTE DETAIL SLIDE PANEL ---
         let typeWriterTimeout; 
 
         function openRouteDetail(index) {
-            const route = canalZoneData.routes[index];
+            const activeCrag = cragsDatabase[currentCragId];
+            const route = activeCrag.routes[index];
             
             document.getElementById('detail-name').innerText = route.name;
             document.getElementById('detail-grade').innerText = route.grade;
             document.getElementById('detail-stars').innerHTML = generateStarHTML(route.stars);
             
-            const isTrad = route.type.includes('Trad');
-            const protection = isTrad ? "Gear / Mixed" : "Bolts";
-            
             const heightMatch = route.height.match(/\d+/);
             const heightFt = heightMatch ? parseInt(heightMatch[0]) : 0;
-            
             let ropeSize = "Unknown";
             if (heightFt > 0) {
                 ropeSize = heightFt >= 95 ? "70m MINIMUM" : "60m MINIMUM";
             }
 
-            const terminalText = `> LOGISTICS CHECK...\n> HEIGHT: ${route.height}\n> PITCHES: ${route.pitches}\n> GEAR: ${protection}\n> ROPE: ${ropeSize}\n> LOC: ${route.locationBeta}\n> STATUS: READY TO SEND`;
+            const terminalText = `> HEIGHT: ${route.height}\n> PITCHES: ${route.pitches}\n> BOLTS: ${route.bolts}\n> ROPE: ${ropeSize}\n> LOC: ${route.locationBeta}\n> STATUS: READY TO SEND`;
             
             const infoBox = document.getElementById('detail-info');
             infoBox.innerText = '';
@@ -386,6 +459,7 @@
             };
             typeWriter();
             
+            const isTrad = route.type.includes('Trad');
             const typeStyle = isTrad ? 'border-neon-pink text-neon-pink shadow-[2px_2px_0px_#ec4899]' : 'border-neon-cyan text-neon-cyan shadow-[2px_2px_0px_#22d3ee]';
             document.getElementById('detail-badges').innerHTML = `
                 <span class="px-3 py-1 bg-slate-900 text-xs font-retro font-bold border ${typeStyle}">${route.type}</span>
@@ -402,10 +476,11 @@
             document.getElementById('main-list-view').classList.remove('-translate-x-10', 'opacity-20');
         }
 
-        // --- 4. INITIALIZE MAP ---
+        // --- 5. INITIALIZE MAP ---
+        const initialCrag = cragsDatabase[currentCragId];
         const map = L.map('map', {
             zoomControl: false 
-        }).setView([canalZoneData.lat, canalZoneData.lng], 16);
+        }).setView([initialCrag.lat, initialCrag.lng], 16);
 
         L.control.zoom({ position: 'topright' }).addTo(map);
 
@@ -414,8 +489,8 @@
             maxZoom: 19
         }).addTo(map);
 
-        // --- 5. MAP VARIABLES ---
-        let cragLocation = L.latLng(canalZoneData.lat, canalZoneData.lng);
+        // --- 6. MAP VARIABLES ---
+        let cragLocation = L.latLng(initialCrag.lat, initialCrag.lng);
         let cragMarker = null;
         let sunRaysLayer = L.layerGroup().addTo(map);
         
@@ -427,10 +502,10 @@
         const currentDayOfYear = Math.floor((today - start) / (1000 * 60 * 60 * 24));
         slider.value = currentDayOfYear;
 
-        // --- 6. MAP EVENT LISTENERS ---
+        // --- 7. MAP EVENT LISTENERS ---
         map.on('click', function(e) {
             cragLocation = e.latlng;
-            document.getElementById('crag-coords').innerText = `${e.latlng.lat.toFixed(4)}, ${e.latlng.lng.toFixed(4)}`;
+            document.getElementById('ui-crag-coords').innerText = `${e.latlng.lat.toFixed(4)}, ${e.latlng.lng.toFixed(4)}`;
             updateMapFeatures();
         });
 
@@ -448,7 +523,7 @@
         }).observe(document.getElementById('map'));
 
 
-        // --- 7. SUN RAY LOGIC ---
+        // --- 8. SUN RAY LOGIC ---
         function updateMapFeatures() {
             sunRaysLayer.clearLayers();
 
@@ -547,6 +622,11 @@
                 }).addTo(sunRaysLayer);
             }
         }
+
+        // --- 9. TRIGGER INITIAL RENDER ---
+        // Calling this after all necessary map variables and layers are fully initialized 
+        // to prevent 'cragLocation is not defined' errors.
+        switchCrag('canal-zone');
     </script>
 </body>
 </html>
