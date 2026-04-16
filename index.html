@@ -197,8 +197,8 @@
                         <span class="flex items-center gap-1.5"><svg class="w-4 h-4 text-neon-pink" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path></svg> <span id="ui-crag-coords">0.0, 0.0</span></span>
                         <span class="flex items-center gap-1.5 text-neon-yellow border border-neon-yellow/30 bg-neon-yellow/10 px-2 py-0.5 rounded-sm"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg> <span id="ui-crag-aspect">ASPECT</span></span>
                     </div>
-                    <div class="max-h-24 overflow-y-auto custom-scrollbar pr-2">
-                        <p id="ui-crag-desc" class="text-slate-400 text-xs sm:text-sm leading-relaxed">
+                    <div id="crag-desc-container" class="transition-all duration-300 ease-in-out overflow-hidden origin-top" style="max-height: 250px; opacity: 1;">
+                        <p id="ui-crag-desc" class="text-slate-400 text-xs sm:text-sm leading-relaxed pr-2">
                             Description goes here...
                         </p>
                     </div>
@@ -298,7 +298,7 @@
                 lat: 39.7503,
                 lng: -105.2478,
                 aspect: "SOUTH FACING",
-                description: "The first crag on the left heading up Clear Creek. With excellent CCC rock, the crag holds shade through the mornings until around 2:00 in the summer.",
+                description: "🚗 PARKING: Use the 2nd pullout on the left heading up canyon (opened 9/21). 🥾 APPROACH: Walk down the paved trail to stone stairs on the right (Climber Access sign). Climb stairs and walk 4 mins to the far right side of the crag. Holds morning shade until ~2:00 PM. ⚠️ RAPTOR CLOSURES: Feb 1 - July 31.",
                 routes: [
                     { name: "Cut Loose", grade: "5.11a", stars: 3, type: "Sport", height: "75 ft", pitches: 1, loc: "A1", bolts: "8", locationBeta: "Far left end of the Canal Zone. It's the very first bolted line you encounter. Look for the newer Climb Tech mussy hooks at the anchors." },
                     { name: "Bear's Choice", grade: "5.10b", stars: 3, type: "Sport", height: "75 ft", pitches: 1, loc: "A2", bolts: "8", locationBeta: "Far left side. The second bolted line from the left edge of the wall. Shares a start with the 5.8 Easy Variation." },
@@ -336,7 +336,7 @@
                 lat: 39.7388,
                 lng: -105.3222,
                 aspect: "SOUTH FACING",
-                description: "This is a fantastic crag with a short, steep approach. A host of excellent climbs reside here, most being in the 5.11 - 5.12 range. The guidebook doesn't lie in saying that this is some of the best rock in the canyon.",
+                description: "🚗 PARKING: Large south-side pullout immediately west of Tunnel 2 (5.1 miles west of Tunnel 1). Park away from the hill base to avoid falling scree on your car. 🥾 APPROACH: Short, steep, slippery trail directly up to the wall. Some of the best 5.11-5.12 rock in the canyon. ⚠️ RAPTOR CLOSURES: Feb 1 - July 31.",
                 routes: [
                     { name: "Alone Time with my Banana", grade: "5.6", stars: 2, type: "Sport", height: "90 ft", pitches: 1, loc: "A", bolts: "Bolts +/- Gear", locationBeta: "Far left side of the wall. A relatively short, easy climb to warm up on." },
                     { name: "Leftover Stuff", grade: "5.10", stars: 2.5, type: "Sport", height: "110 ft", pitches: 1, loc: "B", bolts: "Bolts", locationBeta: "Left side. Located between the Banana route and Hot Stuff." },
@@ -516,6 +516,15 @@
                 
                 // Reset sort dropdown to default
                 document.getElementById('sort-select').value = 'ltr';
+
+                // Reset Scroll and Description UI
+                const routesContainer = document.getElementById('routes-container');
+                const descContainer = document.getElementById('crag-desc-container');
+                if (routesContainer) routesContainer.scrollTop = 0;
+                if (descContainer) {
+                    descContainer.style.maxHeight = '250px';
+                    descContainer.style.opacity = '1';
+                }
 
                 // Map Updates
                 cragOverviewLayer.clearLayers(); // clear overview markers
@@ -802,6 +811,18 @@
 
         // --- 9. TRIGGER INITIAL RENDER ---
         switchCrag('home');
+
+        // --- 10. SCROLL TO COLLAPSE LOGIC ---
+        document.getElementById('routes-container').addEventListener('scroll', function() {
+            const descContainer = document.getElementById('crag-desc-container');
+            if (this.scrollTop > 20) {
+                descContainer.style.maxHeight = '0px';
+                descContainer.style.opacity = '0';
+            } else {
+                descContainer.style.maxHeight = '250px';
+                descContainer.style.opacity = '1';
+            }
+        });
     </script>
 </body>
 </html>
