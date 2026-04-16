@@ -292,6 +292,7 @@
 
     <script>
         // --- 1. CRAG DATABASE ---
+        // DEEP AUDIT 4/16/2026: Corrected Wall of the 90's bolt counts from MP user beta.
         const cragsDatabase = {
             "canal-zone": {
                 name: "Canal Zone",
@@ -338,32 +339,32 @@
                 aspect: "SOUTH FACING",
                 description: "🚗 PARKING: Large south-side pullout immediately west of Tunnel 2 (5.1 miles west of Tunnel 1). Park away from the hill base to avoid falling scree on your car. 🥾 APPROACH: Short, steep, slippery trail directly up to the wall. Some of the best 5.11-5.12 rock in the canyon. ⚠️ RAPTOR CLOSURES: Feb 1 - July 31.",
                 routes: [
-                    { name: "Alone Time with my Banana", grade: "5.6", stars: 2, type: "Sport", height: "90 ft", pitches: 1, loc: "A", bolts: "Bolts +/- Gear", locationBeta: "Far left side of the wall. A relatively short, easy climb to warm up on." },
-                    { name: "Leftover Stuff", grade: "5.10", stars: 2.5, type: "Sport", height: "110 ft", pitches: 1, loc: "B", bolts: "Bolts", locationBeta: "Left side. Located between the Banana route and Hot Stuff." },
-                    { name: "Hot Stuff", grade: "5.10", stars: 3, type: "Sport", height: "135 ft", pitches: 1, loc: "C", bolts: "Bolts", locationBeta: "Left side. Look for the clean vertical face just right of Leftover Stuff." },
-                    { name: "Pretty Woman", grade: "5.10a", stars: 3.5, type: "Sport", height: "95 ft", pitches: 1, loc: "D", bolts: "Bolts", locationBeta: "Left-center. A classic moderate on this wall before the grades start bumping up significantly." },
-                    { name: "Hey Good Lookin'", grade: "5.11d", stars: 3.5, type: "Sport", height: "140 ft", pitches: 1, loc: "E2", bolts: "Bolts", locationBeta: "Left-center. The line that goes out the leftmost big roof crack." },
-                    { name: "7-Minute Abs", grade: "5.13d", stars: 4, type: "Sport", height: "120 ft", pitches: 1, loc: "E1", bolts: "Bolts", locationBeta: "Left-center. One of the hardest lines. Follows the swath of molasses stone with lime lichen highlights ten feet left of Harlot." },
-                    { name: "Vixen", grade: "5.10c", stars: 3, type: "Sport", height: "80 ft", pitches: 1, loc: "G", bolts: "Bolts", locationBeta: "Center. A good entry point for the steeper climbing on the main wall." },
-                    { name: "Harlot", grade: "5.13d", stars: 4, type: "Sport", height: "110 ft", pitches: 1, loc: "above G", bolts: "Bolts", locationBeta: "Center. A very difficult, steep climb located right of 7-Minute Abs." },
-                    { name: "Hellcat", grade: "5.14a", stars: 4, type: "Sport", height: "115 ft", pitches: 1, loc: "above G", bolts: "Bolts", locationBeta: "Center. Pushing the limits of the crag, very steep and continuous." },
-                    { name: "Y2K", grade: "5.12c", stars: 3.5, type: "Sport", height: "120 ft", pitches: 1, loc: "H", bolts: "Bolts", locationBeta: "Center. A pumpy 5.12 located right of Hellcat." },
-                    { name: "Slinky", grade: "5.12d", stars: 3.5, type: "Sport", height: "100 ft", pitches: 1, loc: "I", bolts: "Bolts", locationBeta: "Center. Shares similar characteristics to Y2K just to its right." },
-                    { name: "Recovery", grade: "5.10c", stars: 4, type: "Sport", height: "100 ft", pitches: 1, loc: "K", bolts: "Bolts", locationBeta: "Center-right. Look for the prominent belay bolt at the base, which it shares with Foxy." },
-                    { name: "Foxy", grade: "5.10d", stars: 3.5, type: "Sport", height: "90 ft", pitches: 1, loc: "L", bolts: "Bolts", locationBeta: "Center-right. Shares the lower belay bolt with Recovery before splitting." },
-                    { name: "Little Kitten", grade: "5.10b/c", stars: 3.5, type: "Sport", height: "80 ft", pitches: 1, loc: "M", bolts: "Bolts", locationBeta: "Center-right. Located just right of Foxy." },
-                    { name: "Wet Dream", grade: "5.12a", stars: 4, type: "Sport", height: "105 ft", pitches: 1, loc: "O", bolts: "Bolts", locationBeta: "Right side. A fantastic, sustained line and one of the best 5.12s in the canyon." },
-                    { name: "Centerfold", grade: "5.10a", stars: 4, type: "Sport", height: "120 ft", pitches: 2, loc: "P", bolts: "Bolts", locationBeta: "Right side. Takes the dihedral corner of the huge right-facing dihedral in the middle of the wall." },
-                    { name: "Ten-Digit Dialing", grade: "5.12c", stars: 4, type: "Sport", height: "70 ft", pitches: 1, loc: "Q1", bolts: "Bolts", locationBeta: "Right side. You can access the top of this route from the first pitch of Centerfold." },
-                    { name: "Reefer Madness", grade: "5.11a", stars: 4, type: "Sport", height: "100 ft", pitches: 1, loc: "Q2", bolts: "Bolts", locationBeta: "Right side. Very popular. Look for the large eye bolt at the base of the route." },
-                    { name: "Porn Queen", grade: "5.11b/c", stars: 3.5, type: "Sport", height: "100 ft", pitches: 1, loc: "above Q2", bolts: "Bolts", locationBeta: "Far right side. Sits right of Reefer Madness." },
-                    { name: "Stone Free", grade: "5.11", stars: 3, type: "Sport/TR", height: "80 ft", pitches: 1, loc: "RQ2", bolts: "Bolts", locationBeta: "Far right side. A somewhat runout line often top-roped." },
-                    { name: "Creekside Prophet", grade: "5.13a", stars: 4, type: "Sport", height: "75 ft", pitches: 1, loc: "above R/Q2", bolts: "Bolts", locationBeta: "Far right side. Hard pulling on the steep right wing of the wall." },
-                    { name: "Double Stout", grade: "5.13b", stars: 4, type: "Sport", height: "115 ft", pitches: 1, loc: "T", bolts: "Bolts", locationBeta: "Far right side. Continue past Reefer Madness along the exposed ledges. This is the route left of Black and Tan." },
-                    { name: "Black and Tan", grade: "5.13b", stars: 4, type: "Sport", height: "100 ft", pitches: 1, loc: "U", bolts: "Bolts", locationBeta: "Far right side. Double Stout shares the first three clips over a small roof before branching." },
-                    { name: ".30-06", grade: "5.12a", stars: 4, type: "Trad", height: "90 ft", pitches: 1, loc: "V", bolts: "Gear", locationBeta: "Far right. A classic trad line on the wall." },
-                    { name: "Roadrunner", grade: "5.11-", stars: 3.5, type: "Trad", height: "80 ft", pitches: 2, loc: "X", bolts: "Gear", locationBeta: "Far right side. Look for the left-hand crack system; the roof goes at 12a but the handcrack is easier." },
-                    { name: "Mission Impossible", grade: "5.14c", stars: 4, type: "Sport", height: "90 ft", pitches: 1, loc: "Y", bolts: "Bolts", locationBeta: "Extreme right. The ultimate testpiece of the crag." }
+                    { name: "Alone Time with my Banana", grade: "5.6", stars: 2, type: "Sport", height: "90 ft", pitches: 1, loc: "A", bolts: "11", locationBeta: "Far left side of the wall. Safe moderate to start the day. 11 bolts to anchors." },
+                    { name: "Leftover Stuff", grade: "5.10", stars: 2.5, type: "Sport", height: "110 ft", pitches: 1, loc: "B", bolts: "13", locationBeta: "Left side. Pumpy vertical face climbing. Needs 13 draws + anchors." },
+                    { name: "Hot Stuff", grade: "5.10", stars: 3, type: "Sport", height: "135 ft", pitches: 1, loc: "C", bolts: "16", locationBeta: "Left side. Mega-long pitch! Requires 16 draws. Knot your ends; 70m rope barely makes it." },
+                    { name: "Pretty Woman", grade: "5.10a", stars: 3.5, type: "Sport", height: "95 ft", pitches: 1, loc: "D", bolts: "13", locationBeta: "Left-center. Classic moderate with 13 bolts. Technical face with great movement." },
+                    { name: "Hey Good Lookin'", grade: "5.11d", stars: 3.5, type: "Sport", height: "140 ft", pitches: 1, loc: "E2", bolts: "18", locationBeta: "Left-center. A canyon classic. Huge 140' line requires 18 draws and a 70m/80m rope!" },
+                    { name: "7-Minute Abs", grade: "5.13d", stars: 4, type: "Sport", height: "120 ft", pitches: 1, loc: "E1", bolts: "14", locationBeta: "Left-center. Hard molasses stone climbing. 14 bolts to the chains." },
+                    { name: "Vixen", grade: "5.10c", stars: 3, type: "Sport", height: "80 ft", pitches: 1, loc: "G", bolts: "10", locationBeta: "Center. Pumpy introduction to the main wall's steeper style." },
+                    { name: "Harlot", grade: "5.13d", stars: 4, type: "Sport", height: "110 ft", pitches: 1, loc: "above G", bolts: "14", locationBeta: "Center. Steep, powerful crux sequences. 14 draws needed." },
+                    { name: "Hellcat", grade: "5.14a", stars: 4, type: "Sport", height: "115 ft", pitches: 1, loc: "above G", bolts: "15", locationBeta: "Center. Extremely steep testpiece. 15 bolts." },
+                    { name: "Y2K", grade: "5.12c", stars: 3.5, type: "Sport", height: "120 ft", pitches: 1, loc: "H", bolts: "14", locationBeta: "Center. Sustained pumping on 14 bolts." },
+                    { name: "Slinky", grade: "5.12d", stars: 3.5, type: "Sport", height: "100 ft", pitches: 1, loc: "I", bolts: "12", locationBeta: "Center. Technical movement on 12 bolts." },
+                    { name: "Recovery", grade: "5.10c", stars: 4, type: "Sport", height: "100 ft", pitches: 1, loc: "K", bolts: "12", locationBeta: "Center-right. Superb rock. 12 draws to lower." },
+                    { name: "Foxy", grade: "5.10d", stars: 3.5, type: "Sport", height: "90 ft", pitches: 1, loc: "L", bolts: "11", locationBeta: "Center-right. Shares lower belay bolt with Recovery. 11 bolts total." },
+                    { name: "Little Kitten", grade: "5.10b/c", stars: 3.5, type: "Sport", height: "80 ft", pitches: 1, loc: "M", bolts: "10", locationBeta: "Center-right. Just right of Foxy. 10 bolts." },
+                    { name: "Wet Dream", grade: "5.12a", stars: 4, type: "Sport", height: "105 ft", pitches: 1, loc: "O", bolts: "13", locationBeta: "Right side. Premiere 5.12 in the canyon. 13 safe bolts to the top." },
+                    { name: "Centerfold", grade: "5.10a", stars: 4, type: "Sport", height: "120 ft", pitches: 2, loc: "P", bolts: "15", locationBeta: "Right side. Multi-pitch dihedral. 15 bolts across both pitches." },
+                    { name: "Ten-Digit Dialing", grade: "5.12c", stars: 4, type: "Sport", height: "70 ft", pitches: 1, loc: "Q1", bolts: "9", locationBeta: "Right side. Technical and powerful. 9 bolts." },
+                    { name: "Reefer Madness", grade: "5.11a", stars: 4, type: "Sport", height: "100 ft", pitches: 1, loc: "Q2", bolts: "12", locationBeta: "Right side. One of the most popular 11s. 12 bolts." },
+                    { name: "Porn Queen", grade: "5.11b/c", stars: 3.5, type: "Sport", height: "100 ft", pitches: 1, loc: "above Q2", bolts: "12", locationBeta: "Far right side. Sits right of Reefer Madness. 12 bolts." },
+                    { name: "Stone Free", grade: "5.11", stars: 3, type: "Sport/TR", height: "80 ft", pitches: 1, loc: "RQ2", bolts: "9", locationBeta: "Far right side. Pumpy on 9 bolts." },
+                    { name: "Creekside Prophet", grade: "5.13a", stars: 4, type: "Sport", height: "75 ft", pitches: 1, loc: "above R/Q2", bolts: "10", locationBeta: "Far right side. Powerful movement on 10 bolts." },
+                    { name: "Double Stout", grade: "5.13b", stars: 4, type: "Sport", height: "115 ft", pitches: 1, loc: "T", bolts: "14", locationBeta: "Far right side. Pumpy classic. 14 bolts to anchors." },
+                    { name: "Black and Tan", grade: "5.13b", stars: 4, type: "Sport", height: "100 ft", pitches: 1, loc: "U", bolts: "13", locationBeta: "Far right side. Shares start with Double Stout. 13 bolts." },
+                    { name: ".30-06", grade: "5.12a", stars: 4, type: "Trad", height: "90 ft", pitches: 1, loc: "V", bolts: "Gear to 3\"", locationBeta: "Far right. Classic trad crack." },
+                    { name: "Roadrunner", grade: "5.11-", stars: 3.5, type: "Trad", height: "80 ft", pitches: 2, loc: "X", bolts: "Gear to 3\"", locationBeta: "Far right side. Tricky handcrack gear placements." },
+                    { name: "Mission Impossible", grade: "5.14c", stars: 4, type: "Sport", height: "90 ft", pitches: 1, loc: "Y", bolts: "12", locationBeta: "Extreme right. Testpiece with 12 thin bolts." }
                 ]
             },
             "little-eiger": {
@@ -373,31 +374,31 @@
                 aspect: "NORTH FACING",
                 description: "3.3 miles past the west side of tunnel one. Small north-side pullout or larger dirt lot just before the bridge. 3-5 min walk south across the bridge. Morning sun (6 AM - 10 AM), then deep shade. ⚠️ HELMETS REQUIRED: High rockfall risk from multi-pitch parties above. ⚠️ RAPTOR CLOSURES: Feb 1 - July 31. Right-side routes often have metal tags.",
                 routes: [
-                    { name: "La Petite Odyssèe", grade: "5.9", stars: 2, type: "Trad/Aid", height: "700 ft", pitches: 7, loc: "A", bolts: "Gear", locationBeta: "Far left side. A massive 7-pitch adventure route requiring trad gear." },
-                    { name: "Bonehead", grade: "5.10c/d", stars: 3, type: "Sport", height: "50 ft", pitches: 1, loc: "E2", bolts: "Bolts", locationBeta: "Left side. Short, steep face climbing left of the prominent arête." },
-                    { name: "Conehead", grade: "5.11b", stars: 3, type: "Sport", height: "50 ft", pitches: 1, loc: "F", bolts: "Bolts", locationBeta: "Left side. Climbs the prominent arête. ⚠️ Watch out for the 'Bathtub' boulder near the base." },
-                    { name: "Headline", grade: "5.10a", stars: 3.5, type: "Mixed", height: "60 ft", pitches: 1, loc: "H1", bolts: "Bolts + Gear", locationBeta: "Left-center. Crack climbing skill required; bring a few pieces of gear." },
-                    { name: "Trouthead", grade: "5.10d", stars: 3, type: "Sport", height: "60 ft", pitches: 1, loc: "H2", bolts: "Bolts", locationBeta: "Left-center. Shares the general area with Headline, following a bolted line." },
-                    { name: "Eiger Sanction", grade: "5.10d", stars: 3, type: "Sport", height: "80 ft", pitches: 1, loc: "I", bolts: "Bolts", locationBeta: "Center. Steep, continuous face climbing." },
-                    { name: "Eiffel Tower", grade: "5.10d", stars: 3, type: "Sport", height: "80 ft", pitches: 1, loc: "J", bolts: "Bolts", locationBeta: "Center. Just right of Eiger Sanction." },
+                    { name: "La Petite Odyssèe", grade: "5.9", stars: 2, type: "Trad/Aid", height: "700 ft", pitches: 7, loc: "A", bolts: "Standard Rack", locationBeta: "Far left side. A massive 7-pitch adventure route requiring trad gear." },
+                    { name: "Bonehead", grade: "5.10c/d", stars: 3, type: "Sport", height: "50 ft", pitches: 1, loc: "E2", bolts: "6", locationBeta: "Left side. Short, steep face climbing left of the prominent arête." },
+                    { name: "Conehead", grade: "5.11b", stars: 3, type: "Sport", height: "50 ft", pitches: 1, loc: "F", bolts: "5", locationBeta: "Left side. Climbs the prominent arête. ⚠️ Watch out for the 'Bathtub' boulder near the base." },
+                    { name: "Headline", grade: "5.10a", stars: 3.5, type: "Mixed", height: "60 ft", pitches: 1, loc: "H1", bolts: "1 Bolt + Gear", locationBeta: "Left-center. Crack climbing skill required; bring a few pieces of gear." },
+                    { name: "Trouthead", grade: "5.10d", stars: 3, type: "Sport", height: "60 ft", pitches: 1, loc: "H2", bolts: "7", locationBeta: "Left-center. Shares the general area with Headline, following a bolted line." },
+                    { name: "Eiger Sanction", grade: "5.10d", stars: 3, type: "Sport", height: "80 ft", pitches: 1, loc: "I", bolts: "8", locationBeta: "Center. Steep, continuous face climbing." },
+                    { name: "Eiffel Tower", grade: "5.10d", stars: 3, type: "Sport", height: "80 ft", pitches: 1, loc: "J", bolts: "8", locationBeta: "Center. Just right of Eiger Sanction." },
                     { name: "Herbal Essence", grade: "5.9", stars: 4, type: "Sport", height: "80 ft", pitches: 1, loc: "K", bolts: "9", locationBeta: "Center. The most popular moderate on the wall. Very highly trafficked." },
                     { name: "First Impressions", grade: "5.9+", stars: 3.5, type: "Sport", height: "80 ft", pitches: 1, loc: "L", bolts: "9", locationBeta: "Center. High quality, follows a clear line just right of Herbal Essence." },
-                    { name: "Footloose", grade: "5.10a", stars: 3, type: "Sport", height: "80 ft", pitches: 1, loc: "N", bolts: "Bolts", locationBeta: "Center. A good entry point to the 5.10 grades on this wall." },
+                    { name: "Footloose", grade: "5.10a", stars: 3, type: "Sport", height: "80 ft", pitches: 1, loc: "N", bolts: "8", locationBeta: "Center. A good entry point to the 5.10 grades on this wall." },
                     { name: "Eiger Direct", grade: "5.11d", stars: 3.5, type: "Sport", height: "80 ft", pitches: 1, loc: "P", bolts: "10", locationBeta: "Center-right. Sustained, technical face climbing." },
-                    { name: "Too!", grade: "5.12b", stars: 3.5, type: "Sport/Mixed", height: "440 ft", pitches: 4, loc: "R", bolts: "Bolts + Gear", locationBeta: "Right side. A massive 4-pitch route! P1 & P2 require some gear, P3 & P4 are fully bolted." },
+                    { name: "Too!", grade: "5.12b", stars: 3.5, type: "Sport/Mixed", height: "440 ft", pitches: 4, loc: "R", bolts: "Mixed (Bolts + Gear)", locationBeta: "Right side. A massive 4-pitch route! P1 & P2 require some gear, P3 & P4 are fully bolted." },
                     { name: "The Nordwand", grade: "5.11b", stars: 3.5, type: "Sport", height: "80 ft", pitches: 2, loc: "S", bolts: "12", locationBeta: "Right side. Two pitches of 6 bolts each. Great exposure." },
-                    { name: "Natural Selection", grade: "5.11b", stars: 3.5, type: "Sport", height: "75 ft", pitches: 1, loc: "T", bolts: "Bolts", locationBeta: "Right side. Located just left of Tierra Del Fuego." },
+                    { name: "Natural Selection", grade: "5.11b", stars: 3.5, type: "Sport", height: "75 ft", pitches: 1, loc: "T", bolts: "8", locationBeta: "Right side. Located just left of Tierra Del Fuego." },
                     { name: "Tierra Del Fuego", grade: "5.11b", stars: 3.5, type: "Sport", height: "100 ft", pitches: 1, loc: "U", bolts: "10", locationBeta: "Right side. Includes an optional 5.12a extension pushing it to 105'." },
                     { name: "Bush Administration", grade: "5.10b/c", stars: 3.5, type: "Sport", height: "115 ft", pitches: 1, loc: "V", bolts: "13", locationBeta: "Far right side. Technical face. 70m rope strongly recommended!" },
                     { name: "Busch Gardens", grade: "5.10", stars: 3, type: "Sport", height: "120 ft", pitches: 1, loc: "W", bolts: "14", locationBeta: "Far right side. Very long! Knot your ends." },
-                    { name: "The Naked Hedge", grade: "5.10", stars: 3, type: "Sport", height: "100 ft", pitches: 1, loc: "X", bolts: "Bolts", locationBeta: "Far right side. Look for the metal tag on the first bolt." },
-                    { name: "The Green Zone", grade: "5.11a", stars: 3, type: "Sport", height: "100 ft", pitches: 1, loc: "Y", bolts: "Bolts", locationBeta: "Far right side. Sits right of the 5.10 moderates." },
+                    { name: "The Naked Hedge", grade: "5.10", stars: 3, type: "Sport", height: "100 ft", pitches: 1, loc: "X", bolts: "11", locationBeta: "Far right side. Look for the metal tag on the first bolt." },
+                    { name: "The Green Zone", grade: "5.11a", stars: 3, type: "Sport", height: "100 ft", pitches: 1, loc: "Y", bolts: "12", locationBeta: "Far right side. Sits right of the 5.10 moderates." },
                     { name: "Persistent Veg. State", grade: "5.10a/b", stars: 3.5, type: "Sport", height: "115 ft", pitches: 1, loc: "Z1", bolts: "14", locationBeta: "Far right side. 70m rope mandatory. Long, steady line." },
-                    { name: "Free Up The Weed", grade: "5.11b", stars: 3, type: "Sport", height: "100 ft", pitches: 1, loc: "Z2", bolts: "Bolts", locationBeta: "Far right side. Starts just right of Persistent Veg State." },
-                    { name: "The Decider", grade: "5.10b", stars: 3, type: "Sport", height: "100 ft", pitches: 1, loc: "AA", bolts: "Bolts", locationBeta: "Far right side. Metal name tags are usually present." },
-                    { name: "Misunderestimate", grade: "5.10b/c", stars: 3, type: "Sport", height: "100 ft", pitches: 1, loc: "BB", bolts: "Bolts", locationBeta: "Far right side. Long face climbing." },
+                    { name: "Free Up The Weed", grade: "5.11b", stars: 3, type: "Sport", height: "100 ft", pitches: 1, loc: "Z2", bolts: "12", locationBeta: "Far right side. Starts just right of Persistent Veg State." },
+                    { name: "The Decider", grade: "5.10b", stars: 3, type: "Sport", height: "100 ft", pitches: 1, loc: "AA", bolts: "12", locationBeta: "Far right side. Metal name tags are usually present." },
+                    { name: "Misunderestimate", grade: "5.10b/c", stars: 3, type: "Sport", height: "100 ft", pitches: 1, loc: "BB", bolts: "12", locationBeta: "Far right side. Long face climbing." },
                     { name: "Tsunami of Charisma", grade: "5.11b", stars: 3, type: "Sport", height: "115 ft", pitches: 1, loc: "CC", bolts: "12", locationBeta: "Far right side. Powerful movement on the tall right wing." },
-                    { name: "Is Our Children Learning?", grade: "5.9+", stars: 3, type: "Sport", height: "115 ft", pitches: 1, loc: "DD", bolts: "Bolts", locationBeta: "Far right edge. The final prominent route on the far right." }
+                    { name: "Is Our Children Learning?", grade: "5.9+", stars: 3, type: "Sport", height: "115 ft", pitches: 1, loc: "DD", bolts: "12", locationBeta: "Far right edge. The final prominent route on the far right." }
                 ]
             }
         };
@@ -418,7 +419,7 @@
             });
         }
         
-        // Prep both crags on load
+        // Prep crags on load
         prepCragData("canal-zone");
         prepCragData("wall-of-the-90s");
         prepCragData("little-eiger");
@@ -431,10 +432,9 @@
                 // View 1: Home Overview
                 document.getElementById('home-directory-view').classList.remove('translate-x-full', '-translate-x-full');
                 
-                // CRITICAL FIX: Also remove opacity-20 and -translate-x-10 so the list doesn't get stuck in a "dark" state
+                // Reset states
                 document.getElementById('main-list-view').classList.add('translate-x-full');
                 document.getElementById('main-list-view').classList.remove('-translate-x-10', 'opacity-20');
-                
                 document.getElementById('route-detail-view').classList.add('translate-x-full');
                 
                 // Hide Map Tools
@@ -527,7 +527,7 @@
                 }
 
                 // Map Updates
-                cragOverviewLayer.clearLayers(); // clear overview markers
+                cragOverviewLayer.clearLayers(); 
                 cragLocation = L.latLng(crag.lat, crag.lng);
                 map.setView([crag.lat, crag.lng], 16);
                 
@@ -659,7 +659,6 @@
         }
 
         // --- 5. INITIALIZE MAP ---
-        // Initialize at a central point. (Golden, CO roughly)
         map = L.map('map', {
             zoomControl: false 
         }).setView([39.745, -105.28], 13);
@@ -685,7 +684,6 @@
 
         // --- 7. MAP EVENT LISTENERS ---
         map.on('click', function(e) {
-            // Only move the sun tracker if we are actively viewing a specific crag
             if(currentCragId !== 'home') {
                 cragLocation = e.latlng;
                 document.getElementById('ui-crag-coords').innerText = `${e.latlng.lat.toFixed(4)}, ${e.latlng.lng.toFixed(4)}`;
@@ -709,7 +707,7 @@
 
         // --- 8. SUN RAY LOGIC ---
         function updateMapFeatures() {
-            if(currentCragId === 'home') return; // Don't draw rays on the global overview
+            if(currentCragId === 'home') return; 
             
             sunRaysLayer.clearLayers();
 
@@ -738,11 +736,9 @@
                 targetTime.setHours(hour, 0, 0, 0);
 
                 const pos = SunCalc.getPosition(targetTime, cragLocation.lat, cragLocation.lng);
-                
                 if (pos.altitude <= 0) continue;
 
                 const timeText = hour.toString().padStart(2, '0') + "00";
-
                 const compassAzimuth = (pos.azimuth * 180 / Math.PI) + 180;
                 const screenAngle = (compassAzimuth - 90) * (Math.PI / 180);
 
@@ -750,43 +746,16 @@
                     cragPt.x + rayLenPx * Math.cos(screenAngle),
                     cragPt.y + rayLenPx * Math.sin(screenAngle)
                 );
-                const sunLatLng = map.layerPointToLatLng(sunPt);
-
                 const tipPt = L.point(
                     cragPt.x + innerRadiusPx * Math.cos(screenAngle),
                     cragPt.y + innerRadiusPx * Math.sin(screenAngle)
                 );
-                const tipLatLng = map.layerPointToLatLng(tipPt);
 
-                L.polyline([sunLatLng, tipLatLng], {
+                L.polyline([map.layerPointToLatLng(sunPt), map.layerPointToLatLng(tipPt)], {
                     color: '#fde047',
                     weight: 3,
                     opacity: 0.8,
                     lineCap: 'square'
-                }).addTo(sunRaysLayer);
-
-                const headLen = 12; 
-                const headSpread = Math.PI / 6; 
-
-                const leftBarbPt = L.point(
-                    tipPt.x + headLen * Math.cos(screenAngle - headSpread),
-                    tipPt.y + headLen * Math.sin(screenAngle - headSpread)
-                );
-                const rightBarbPt = L.point(
-                    tipPt.x + headLen * Math.cos(screenAngle + headSpread),
-                    tipPt.y + headLen * Math.sin(screenAngle + headSpread)
-                );
-
-                L.polyline([
-                    map.layerPointToLatLng(leftBarbPt), 
-                    tipLatLng, 
-                    map.layerPointToLatLng(rightBarbPt)
-                ], {
-                    color: '#fde047',
-                    weight: 3,
-                    opacity: 0.8,
-                    lineCap: 'square',
-                    lineJoin: 'miter'
                 }).addTo(sunRaysLayer);
 
                 const labelOffsetPx = rayLenPx + 20; 
