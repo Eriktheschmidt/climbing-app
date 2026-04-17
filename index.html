@@ -338,43 +338,59 @@
         import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, collection, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        // --- 0. CLOUD DATABASE INIT ---
-        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {};
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
-
+        // --- 0. CLOUD DATABASE INIT (WITH EXTERNAL HOSTING FALLBACK) ---
+        let db = null;
+        let auth = null;
         let currentUser = null;
         let communityData = {}; // Cloud-synced state
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
 
-        const initAuth = async () => {
-            if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-                await signInWithCustomToken(auth, __initial_auth_token);
-            } else {
-                await signInAnonymously(auth);
-            }
-        };
+        try {
+            if (typeof __firebase_config !== 'undefined' && __firebase_config) {
+                const firebaseConfig = JSON.parse(__firebase_config);
+                // Only initialize if we actually have valid config keys
+                if (Object.keys(firebaseConfig).length > 0) {
+                    const app = initializeApp(firebaseConfig);
+                    auth = getAuth(app);
+                    db = getFirestore(app);
 
-        onAuthStateChanged(auth, (user) => {
-            currentUser = user;
-            if (user) {
-                // Setup live listener for all community beta when authenticated
-                const commRef = collection(db, 'artifacts', appId, 'public', 'data', 'community_beta');
-                onSnapshot(commRef, (snapshot) => {
-                    communityData = {};
-                    snapshot.forEach(doc => {
-                        communityData[doc.id] = doc.data();
+                    const initAuth = async () => {
+                        if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                            await signInWithCustomToken(auth, __initial_auth_token);
+                        } else {
+                            await signInAnonymously(auth);
+                        }
+                    };
+
+                    onAuthStateChanged(auth, (user) => {
+                        currentUser = user;
+                        if (user && db) {
+                            // Setup live listener for all community beta when authenticated
+                            const commRef = collection(db, 'artifacts', appId, 'public', 'data', 'community_beta');
+                            onSnapshot(commRef, (snapshot) => {
+                                communityData = {};
+                                snapshot.forEach(doc => {
+                                    communityData[doc.id] = doc.data();
+                                });
+                                // Refresh view if someone is currently looking at a route
+                                if (window.activeRouteIndex !== null) {
+                                    window.renderCommunityData();
+                                }
+                            });
+                        }
                     });
-                    // Refresh view if someone is currently looking at a route
-                    if (window.activeRouteIndex !== null) {
-                        window.renderCommunityData();
-                    }
-                });
-            }
-        });
 
-        initAuth();
+                    initAuth();
+                } else {
+                    throw new Error("Empty config");
+                }
+            } else {
+                throw new Error("Undefined config");
+            }
+        } catch (e) {
+            console.warn("Running in local mode (No Database Connected). Data will not be saved permanently.");
+            currentUser = { uid: 'local-demo-user' }; // Provide a dummy user so local comments still work
+        }
 
         // --- 1. CRAG DATABASE ---
         const cragsDatabase = {
@@ -816,12 +832,14 @@
             const commentsList = document.getElementById('comments-list');
             setTimeout(() => { commentsList.scrollTop = commentsList.scrollHeight; }, 50);
 
-            // Save to Firebase
-            const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'community_beta', key);
-            try {
-                await setDoc(docRef, { photos: routeData.photos || [], comments: newComments }, { merge: true });
-            } catch(e) {
-                console.error("Failed to save to cloud:", e);
+            // Save to Firebase (Only if connected!)
+            if (db) {
+                const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'community_beta', key);
+                try {
+                    await setDoc(docRef, { photos: routeData.photos || [], comments: newComments }, { merge: true });
+                } catch(e) {
+                    console.error("Failed to save to cloud:", e);
+                }
             }
         }
 
@@ -1029,12 +1047,14 @@
                     communityData[key] = { photos: newPhotos, comments: routeData.comments || [] };
                     window.renderCommunityData();
 
-                    // Save to Firebase
-                    const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'community_beta', key);
-                    try {
-                        await setDoc(docRef, { photos: newPhotos, comments: routeData.comments || [] }, { merge: true });
-                    } catch(e) {
-                        console.error("Failed to save photo to cloud:", e);
+                    // Save to Firebase (Only if connected!)
+                    if (db) {
+                        const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'community_beta', key);
+                        try {
+                            await setDoc(docRef, { photos: newPhotos, comments: routeData.comments || [] }, { merge: true });
+                        } catch(e) {
+                            console.error("Failed to save photo to cloud:", e);
+                        }
                     }
                 }
             }
