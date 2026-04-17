@@ -881,7 +881,10 @@
         // --- 11. CLOUDINARY LOGIC (DIRECT DISPLAY) ---
         const myWidget = cloudinary.createUploadWidget({
             cloudName: 'dwvxvtbuc', 
-            uploadPreset: 'sendtracker'
+            uploadPreset: 'sendtracker',
+            sources: ['local', 'camera'], // Restricts options to just local device files and camera
+            multiple: false, // Limits upload to one photo at a time to keep it simple
+            clientAllowedFormats: ["image"] // Ensures they only pick image files
         }, (error, result) => { 
             if (!error && result && result.event === "success") { 
                 const url = result.info.secure_url;
