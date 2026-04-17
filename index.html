@@ -191,12 +191,12 @@
             <!-- STATE 2: MAIN CRAG ROUTE LIST VIEW -->
             <div id="main-list-view" class="flex flex-col h-full w-full absolute inset-0 z-20 bg-[#0f172a] transition-transform duration-300 transform translate-x-full">
                 <!-- Info Header -->
-                <div class="p-4 sm:p-5 border-b-2 border-slate-800 shrink-0 bg-[#1e293b]">
-                    <div class="flex items-center gap-2 text-[10px] sm:text-[11px] font-retro text-neon-cyan uppercase tracking-widest mb-1">
+                <div id="crag-info-header" class="p-4 sm:p-5 border-b-2 border-slate-800 shrink-0 bg-[#1e293b] transition-all duration-300 ease-in-out">
+                    <div id="crag-header-breadcrumbs" class="flex items-center gap-2 text-[10px] sm:text-[11px] font-retro text-neon-cyan uppercase tracking-widest mb-1 transition-all duration-300 ease-in-out overflow-hidden" style="max-height: 20px; opacity: 1; margin-bottom: 0.25rem;">
                         <span>CO</span> <span class="text-slate-500">&rsaquo;</span> <span>Clear Creek</span>
                     </div>
-                    <h2 id="ui-crag-name" class="text-3xl sm:text-4xl font-black text-white mb-2 tracking-tight">Crag Name</h2>
-                    <div class="flex flex-wrap items-center gap-3 sm:gap-4 text-xs font-retro text-slate-400 mb-3">
+                    <h2 id="ui-crag-name" class="text-3xl sm:text-4xl font-black text-white mb-2 tracking-tight transition-all duration-300 ease-in-out">Crag Name</h2>
+                    <div id="crag-header-badges" class="flex flex-wrap items-center gap-3 sm:gap-4 text-xs font-retro text-slate-400 mb-3 transition-all duration-300 ease-in-out overflow-hidden" style="max-height: 50px; opacity: 1; margin-bottom: 0.75rem;">
                         <span class="flex items-center gap-1.5"><svg class="w-4 h-4 text-neon-pink" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path></svg> <span id="ui-crag-coords">0.0, 0.0</span></span>
                         <span class="flex items-center gap-1.5 text-neon-yellow border border-neon-yellow/30 bg-neon-yellow/10 px-2 py-0.5 rounded-sm"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg> <span id="ui-crag-aspect">ASPECT</span></span>
                     </div>
@@ -273,8 +273,8 @@
                             Community Beta & Photos
                         </h4>
                         
-                        <!-- Photo Gallery -->
-                        <div id="photo-gallery" class="grid grid-cols-2 gap-3 mb-4">
+                        <!-- Photo Gallery (Horizontal Scroll) -->
+                        <div id="photo-gallery" class="flex gap-3 mb-4 overflow-x-auto custom-scrollbar pb-2">
                             <!-- Injected via JS -->
                         </div>
 
@@ -562,10 +562,34 @@
                 // Reset Scroll and Description UI
                 const routesContainer = document.getElementById('routes-container');
                 const descContainer = document.getElementById('crag-desc-container');
+                const badgesContainer = document.getElementById('crag-header-badges');
+                const breadcrumbs = document.getElementById('crag-header-breadcrumbs');
+                const header = document.getElementById('crag-info-header');
+                const title = document.getElementById('ui-crag-name');
+
                 if (routesContainer) routesContainer.scrollTop = 0;
                 if (descContainer) {
                     descContainer.style.maxHeight = '250px';
                     descContainer.style.opacity = '1';
+                    
+                    if (badgesContainer) {
+                        badgesContainer.style.maxHeight = '50px';
+                        badgesContainer.style.opacity = '1';
+                        badgesContainer.style.marginBottom = '0.75rem';
+                    }
+                    if (breadcrumbs) {
+                        breadcrumbs.style.maxHeight = '20px';
+                        breadcrumbs.style.opacity = '1';
+                        breadcrumbs.style.marginBottom = '0.25rem';
+                    }
+                    if (header) {
+                        header.classList.add('p-4', 'sm:p-5');
+                        header.classList.remove('px-4', 'py-3', 'sm:px-5');
+                    }
+                    if (title) {
+                        title.classList.add('text-3xl', 'sm:text-4xl', 'mb-2');
+                        title.classList.remove('text-xl', 'sm:text-2xl', 'mb-0');
+                    }
                 }
 
                 // Map Updates
@@ -704,10 +728,10 @@
             const key = `${currentCragId}-${activeRouteIndex}`;
             const data = communityData[key] || { photos: [], comments: [] };
             
-            // Render Photos
+            // Render Photos (Horizontal Carousel Items)
             const gallery = document.getElementById('photo-gallery');
             gallery.innerHTML = data.photos.map(url => `
-                <div onclick="openImageModal('${url}')" class="relative aspect-square rounded overflow-hidden border border-slate-700 shadow-md cursor-pointer group hover:border-neon-cyan transition-colors">
+                <div onclick="openImageModal('${url}')" class="relative w-32 sm:w-40 aspect-square shrink-0 rounded overflow-hidden border border-slate-700 shadow-md cursor-pointer group hover:border-neon-cyan transition-colors">
                     <img src="${url}" class="w-full h-full object-cover">
                     <div class="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-[2px]">
                         <svg class="w-8 h-8 text-neon-cyan drop-shadow-md" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7"></path></svg>
@@ -891,12 +915,45 @@
         // --- 10. SCROLL TO COLLAPSE LOGIC ---
         document.getElementById('routes-container').addEventListener('scroll', function() {
             const descContainer = document.getElementById('crag-desc-container');
+            const badgesContainer = document.getElementById('crag-header-badges');
+            const breadcrumbs = document.getElementById('crag-header-breadcrumbs');
+            const header = document.getElementById('crag-info-header');
+            const title = document.getElementById('ui-crag-name');
+
             if (this.scrollTop > 20) {
                 descContainer.style.maxHeight = '0px';
                 descContainer.style.opacity = '0';
+                
+                badgesContainer.style.maxHeight = '0px';
+                badgesContainer.style.opacity = '0';
+                badgesContainer.style.marginBottom = '0px';
+
+                breadcrumbs.style.maxHeight = '0px';
+                breadcrumbs.style.opacity = '0';
+                breadcrumbs.style.marginBottom = '0px';
+
+                header.classList.remove('p-4', 'sm:p-5');
+                header.classList.add('px-4', 'py-3', 'sm:px-5');
+                
+                title.classList.remove('text-3xl', 'sm:text-4xl', 'mb-2');
+                title.classList.add('text-xl', 'sm:text-2xl', 'mb-0');
             } else {
                 descContainer.style.maxHeight = '250px';
                 descContainer.style.opacity = '1';
+                
+                badgesContainer.style.maxHeight = '50px';
+                badgesContainer.style.opacity = '1';
+                badgesContainer.style.marginBottom = '0.75rem';
+
+                breadcrumbs.style.maxHeight = '20px';
+                breadcrumbs.style.opacity = '1';
+                breadcrumbs.style.marginBottom = '0.25rem';
+
+                header.classList.add('p-4', 'sm:p-5');
+                header.classList.remove('px-4', 'py-3', 'sm:px-5');
+                
+                title.classList.add('text-3xl', 'sm:text-4xl', 'mb-2');
+                title.classList.remove('text-xl', 'sm:text-2xl', 'mb-0');
             }
         });
 
