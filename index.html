@@ -266,25 +266,34 @@
                         </div>
                     </div>
 
-                    <!-- Community Beta & Comments (Giscus + Cloudinary) -->
+                    <!-- Community Beta & Comments (Custom Feed + Cloudinary) -->
                     <div class="mt-8 border-t border-slate-700 pt-8">
                         <h4 class="text-[10px] sm:text-xs font-retro font-bold text-neon-yellow uppercase tracking-widest mb-4 flex items-center gap-2">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a1.994 1.994 0 01-1.414-.586m0 0L11 14h4a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2v4l.586-.586z"></path></svg>
-                            Community Beta & Comments
+                            Community Beta & Photos
                         </h4>
                         
-                        <!-- Upload Section -->
-                        <div class="bg-[#1e293b] p-4 rounded border border-slate-700 mb-6 text-center shadow-inner">
-                            <p class="text-xs text-slate-400 font-sans mb-3">Got recent intel? Upload a photo of the beta or crag conditions.</p>
-                            <button id="upload_widget" class="w-full sm:w-auto px-6 py-2 bg-slate-900 border border-neon-cyan text-neon-cyan font-retro font-bold text-xs uppercase hover:bg-neon-cyan hover:text-black transition-colors rounded shadow-sm">
-                                Upload Photo
-                            </button>
-                            <div id="photo_url_container" class="mt-3 text-[10px] font-retro text-neon-pink break-all leading-tight"></div>
+                        <!-- Photo Gallery -->
+                        <div id="photo-gallery" class="grid grid-cols-2 gap-3 mb-4">
+                            <!-- Injected via JS -->
                         </div>
 
-                        <!-- Giscus Container -->
-                        <div id="giscus-wrapper" class="w-full bg-[#0f172a] rounded">
-                            <div class="giscus"></div>
+                        <!-- Upload Section -->
+                        <div class="bg-[#1e293b] p-3 sm:p-4 rounded border border-slate-700 mb-6 text-center shadow-inner">
+                            <button id="upload_widget" class="w-full sm:w-auto px-6 py-2 bg-slate-900 border border-neon-cyan text-neon-cyan font-retro font-bold text-xs uppercase hover:bg-neon-cyan hover:text-black transition-colors rounded shadow-sm">
+                                + Upload Route Photo
+                            </button>
+                        </div>
+
+                        <!-- Comments List -->
+                        <div id="comments-list" class="space-y-3 mb-4 max-h-60 overflow-y-auto custom-scrollbar pr-2">
+                            <!-- Injected via JS -->
+                        </div>
+
+                        <!-- Add Comment Form -->
+                        <div class="flex gap-2">
+                            <input type="text" id="new-comment-input" placeholder="Share your beta..." class="flex-grow bg-black border border-slate-700 text-sm p-3 rounded text-slate-200 focus:border-neon-pink outline-none font-sans placeholder-slate-600">
+                            <button onclick="addComment()" class="bg-neon-pink text-black font-bold font-retro text-xs px-5 py-2 rounded hover:bg-white transition-colors">POST</button>
                         </div>
                     </div>
                 </div>
@@ -631,9 +640,12 @@
 
         // --- ROUTE DETAIL SLIDE PANEL ---
         let typeWriterTimeout; 
+        let activeRouteIndex = null;
+        const communityData = {}; // In-memory store for photos and comments
 
         function openRouteDetail(index) {
             if(currentCragId === 'home') return;
+            activeRouteIndex = index;
             const activeCrag = cragsDatabase[currentCragId];
             const route = activeCrag.routes[index];
             
@@ -676,6 +688,54 @@
 
             document.getElementById('route-detail-view').classList.remove('translate-x-full');
             document.getElementById('main-list-view').classList.add('-translate-x-10', 'opacity-20');
+            
+            renderCommunityData();
+        }
+
+        function renderCommunityData() {
+            const key = `${currentCragId}-${activeRouteIndex}`;
+            const data = communityData[key] || { photos: [], comments: [] };
+            
+            // Render Photos
+            const gallery = document.getElementById('photo-gallery');
+            gallery.innerHTML = data.photos.map(url => `
+                <div class="relative aspect-square rounded overflow-hidden border border-slate-700 shadow-md">
+                    <img src="${url}" class="w-full h-full object-cover">
+                </div>
+            `).join('');
+            
+            // Render Comments
+            const commentsList = document.getElementById('comments-list');
+            if (data.comments.length === 0) {
+                commentsList.innerHTML = `<p class="text-slate-500 text-xs italic font-retro">No community beta yet. Be the first!</p>`;
+            } else {
+                commentsList.innerHTML = data.comments.map(c => `
+                    <div class="bg-[#1e293b] p-3 rounded border-l-2 border-neon-cyan text-sm font-sans shadow-sm">
+                        <span class="text-slate-400 text-[10px] uppercase tracking-widest block mb-1 font-retro">${c.date}</span>
+                        <p class="text-slate-200">${c.text}</p>
+                    </div>
+                `).join('');
+            }
+        }
+
+        function addComment() {
+            if (activeRouteIndex === null) return;
+            const input = document.getElementById('new-comment-input');
+            const text = input.value.trim();
+            if (!text) return;
+            
+            const key = `${currentCragId}-${activeRouteIndex}`;
+            if (!communityData[key]) communityData[key] = { photos: [], comments: [] };
+            
+            const dateStr = new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+            communityData[key].comments.push({ text, date: dateStr });
+            
+            input.value = '';
+            renderCommunityData();
+            
+            // Scroll to bottom of comments
+            const commentsList = document.getElementById('comments-list');
+            setTimeout(() => { commentsList.scrollTop = commentsList.scrollHeight; }, 50);
         }
 
         function closeRouteDetail() {
@@ -818,38 +878,24 @@
             }
         });
 
-        // --- 11. CLOUDINARY & GISCUS LOGIC ---
+        // --- 11. CLOUDINARY LOGIC (DIRECT DISPLAY) ---
         const myWidget = cloudinary.createUploadWidget({
             cloudName: 'dwvxvtbuc', 
             uploadPreset: 'sendtracker'
         }, (error, result) => { 
             if (!error && result && result.event === "success") { 
                 const url = result.info.secure_url;
-                document.getElementById('photo_url_container').innerHTML = 
-                    `Success! Copy this URL into your comment: <br><strong class="text-white">${url}</strong>`;
+                if (activeRouteIndex !== null) {
+                    const key = `${currentCragId}-${activeRouteIndex}`;
+                    if (!communityData[key]) communityData[key] = { photos: [], comments: [] };
+                    
+                    communityData[key].photos.push(url);
+                    renderCommunityData();
+                }
             }
         });
 
         document.getElementById("upload_widget").addEventListener("click", () => myWidget.open(), false);
-
-        (function() {
-            const script = document.createElement('script');
-            script.src = "https://giscus.app/client.js";
-            script.setAttribute('data-repo', "[YOUR_REPO]");
-            script.setAttribute('data-repo-id', "[YOUR_REPO_ID]");
-            script.setAttribute('data-category', "General");
-            script.setAttribute('data-category-id', "[YOUR_CATEGORY_ID]");
-            script.setAttribute('data-mapping', "pathname");
-            script.setAttribute('data-strict', "0");
-            script.setAttribute('data-reactions-enabled', "1");
-            script.setAttribute('data-emit-metadata', "0");
-            script.setAttribute('data-input-position', "bottom");
-            script.setAttribute('data-theme', "dark"); 
-            script.setAttribute('data-lang', "en");
-            script.crossOrigin = "anonymous";
-            script.async = true;
-            document.getElementById('giscus-wrapper').appendChild(script);
-        })();
     </script>
 </body>
 </html>
